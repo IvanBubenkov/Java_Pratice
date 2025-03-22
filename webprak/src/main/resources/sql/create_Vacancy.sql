@@ -7,5 +7,6 @@ CREATE TABLE Vacancy (
     min_salary DECIMAL(10,2),
     education INT,
     number_of_views INT DEFAULT 0,
+    FOREIGN KEY (company_id) REFERENCES Site_user(user_id),
     FOREIGN KEY (education) REFERENCES Educational_institutions(education_id)
 );
