@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS Roles CASCADE;
+CREATE TABLE Roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(255) NOT NULL
+);

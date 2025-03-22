@@ -1,18 +1,22 @@
+DROP TABLE IF EXISTS User_statuses CASCADE;
 CREATE TABLE User_statuses (
     status_id SERIAL PRIMARY KEY,
     status_name VARCHAR(255) NOT NULL
 );
 
+DROP TABLE IF EXISTS Roles CASCADE;
 CREATE TABLE Roles (
     role_id SERIAL PRIMARY KEY,
     role_name VARCHAR(255) NOT NULL
 );
 
+DROP TABLE IF EXISTS Educational_institutions CASCADE;
 CREATE TABLE Educational_institutions (
     education_id SERIAL PRIMARY KEY,
     education_level VARCHAR(255) NOT NULL
 );
 
+DROP TABLE IF EXISTS Site_user CASCADE;
 CREATE TABLE Site_user (
     user_id SERIAL PRIMARY KEY,
     login VARCHAR(255) NOT NULL UNIQUE,
@@ -28,6 +32,7 @@ CREATE TABLE Site_user (
     FOREIGN KEY (education) REFERENCES Educational_institutions(education_id)
 );
 
+DROP TABLE IF EXISTS Vacancy CASCADE;
 CREATE TABLE Vacancy (
     vacancy_id SERIAL PRIMARY KEY,
     vacancy_name VARCHAR(255) NOT NULL,
@@ -39,6 +44,7 @@ CREATE TABLE Vacancy (
     FOREIGN KEY (education) REFERENCES Educational_institutions(education_id)
 );
 
+DROP TABLE IF EXISTS Resume CASCADE;
 CREATE TABLE Resume (
     resume_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
@@ -48,6 +54,7 @@ CREATE TABLE Resume (
     FOREIGN KEY (user_id) REFERENCES Site_user(user_id)
 );
 
+DROP TABLE IF EXISTS Work_history CASCADE;
 CREATE TABLE Work_history (
     record_id SERIAL PRIMARY KEY,
     vacancy_name VARCHAR(255) NOT NULL,
@@ -60,6 +67,7 @@ CREATE TABLE Work_history (
     FOREIGN KEY (company_id) REFERENCES Site_user(user_id)
 );
 
+DROP TABLE IF EXISTS Selected_resumes CASCADE;
 CREATE TABLE Selected_resumes (
     record_id SERIAL PRIMARY KEY,
     resume_id INT NOT NULL,
@@ -68,6 +76,7 @@ CREATE TABLE Selected_resumes (
     FOREIGN KEY (company_id) REFERENCES Site_user(user_id)
 );
 
+DROP TABLE IF EXISTS Selected_vacancies CASCADE;
 CREATE TABLE Selected_vacancies (
     record_id SERIAL PRIMARY KEY,
     vacancy_id INT NOT NULL,
