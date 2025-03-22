@@ -8,7 +8,7 @@ CREATE TABLE Site_user (
     full_name_company VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     home_address VARCHAR(255),
-    education INT DEFAULT NULL,
+    education INT,
     FOREIGN KEY (role) REFERENCES Roles(role_id),
     FOREIGN KEY (Status) REFERENCES User_statuses(status_id),
     FOREIGN KEY (education) REFERENCES Educational_institutions(education_id)
