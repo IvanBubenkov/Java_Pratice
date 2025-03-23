@@ -8,4 +8,5 @@ import java.math.BigDecimal;
 public interface VacancyDAO extends CommonDAO<Vacancy, Long>{
     List<Vacancy> findByCriteria(String vacancyName, Long companyId, BigDecimal minSalary, Educational_institutions education);
     List<Vacancy> findTopVacanciesByViews();
+    void incrementViews(Long vacancyId);
 }

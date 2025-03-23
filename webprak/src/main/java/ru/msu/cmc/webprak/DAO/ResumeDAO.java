@@ -7,4 +7,5 @@ import java.math.BigDecimal;
 public interface ResumeDAO extends CommonDAO<Resume, Long>{
     List<Resume> findByCriteria(String resume_name, Long userId, BigDecimal minSalary);
     List<Resume> findTopResumesByViews();
+    void incrementViews(Long resumeId);
 }
