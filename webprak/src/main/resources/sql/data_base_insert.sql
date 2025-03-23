@@ -44,7 +44,7 @@ INSERT INTO Vacancy (vacancy_name, company_id, description, min_salary, educatio
 	('Системный администратор', 1, 'Администрирование серверов', 110000.00, 4, 60),
 	('Руководитель проекта', 2, 'Координация работ', 130000.00, 5, 120);
 
-INSERT INTO Resume (user_id, min_salary_req, number_of_views, vacancy_name) VALUES
+INSERT INTO Resume (user_id, min_salary_req, number_of_views, resume_name) VALUES
 	(5, 60000.00, 50, 'Программист'),
 	(6, 55000.00, 40, 'Инженер-строитель'),
 	(7, 50000.00, 60, 'Логист'),

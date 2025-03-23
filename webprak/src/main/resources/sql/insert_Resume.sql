@@ -1,4 +1,4 @@
-INSERT INTO Resume (user_id, min_salary_req, number_of_views, vacancy_name) VALUES
+INSERT INTO Resume (user_id, min_salary_req, number_of_views, resume_name) VALUES
 	(5, 60000.00, 50, 'Программист'),
 	(6, 55000.00, 40, 'Инженер-строитель'),
 	(7, 50000.00, 60, 'Логист'),

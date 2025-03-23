@@ -35,7 +35,7 @@ public class Resume implements CommonEntity<Long>{
     @ColumnDefault("0")
     private Long number_of_views;
 
-    @Column(nullable = false, name = "vacancy_name")
+    @Column(nullable = false, name = "resume_name")
     @NonNull
-    private String vacancy_name;
+    private String resume_name;
 }
