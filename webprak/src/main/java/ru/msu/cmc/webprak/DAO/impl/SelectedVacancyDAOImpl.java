@@ -16,10 +16,8 @@ public class SelectedVacancyDAOImpl extends CommonDAOImpl<SelectedVacancy, Long>
 
     public SelectedVacancyDAOImpl() {
         super(SelectedVacancy.class);
-    }
-
-    @Override
-    public List<SelectedVacancy> findByCompanyId(Long applicantId) {
+    }  @Override
+    public List<SelectedVacancy> findByApplicantId(Long applicantId) {
         try (Session session = sessionFactory.openSession()) {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<SelectedVacancy> query = builder.createQuery(SelectedVacancy.class);

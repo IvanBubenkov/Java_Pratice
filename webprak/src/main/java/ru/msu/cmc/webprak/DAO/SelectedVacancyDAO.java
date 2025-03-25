@@ -4,5 +4,5 @@ import ru.msu.cmc.webprak.models.SelectedVacancy;
 import java.util.List;
 
 public interface SelectedVacancyDAO extends CommonDAO<SelectedVacancy, Long>{
-    List<SelectedVacancy> findByCompanyId(Long applicantId);
+    List<SelectedVacancy> findByApplicantId(Long applicantId);
 }
