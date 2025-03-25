@@ -8,7 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import ru.msu.cmc.webprak.DAO.VacancyDAO;
-import ru.msu.cmc.webprak.models.Educational_institutions;
+import ru.msu.cmc.webprak.models.EducationalInstitution;
 import ru.msu.cmc.webprak.models.Vacancy;
 
 import java.math.BigDecimal;
@@ -25,7 +25,7 @@ public class VacancyDAOImpl extends CommonDAOImpl<Vacancy, Long> implements Vaca
     }
 
     @Override
-    public List<Vacancy> findByCriteria(String vacancyName, Long companyId, BigDecimal minSalary, Educational_institutions education) {
+    public List<Vacancy> findByCriteria(String vacancyName, Long companyId, BigDecimal minSalary, EducationalInstitution education) {
         try (Session session = sessionFactory.openSession()) {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Vacancy> query = builder.createQuery(Vacancy.class);

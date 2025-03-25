@@ -13,7 +13,8 @@ import jakarta.persistence.*;
 @RequiredArgsConstructor
 @AllArgsConstructor
 
-public class Site_user implements CommonEntity<Long>{
+public class SiteUser implements CommonEntity<Long> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, name = "user_id")
@@ -28,30 +29,30 @@ public class Site_user implements CommonEntity<Long>{
     private String password;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "role")
+    @JoinColumn(nullable = false, name = "role_id")
     @ToString.Exclude
     @NonNull
-    private Roles role;
+    private Role role;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "status")
+    @JoinColumn(nullable = false, name = "status_id")
     @ToString.Exclude
     @NonNull
-    private User_statuses status;
+    private UserStatus status;
 
     @Column(nullable = false, name = "full_name_company")
     @NonNull
-    private String full_name_company;
+    private String fullNameCompany;
 
     @Column(unique = true, nullable = false, name = "email")
     @NonNull
     private String email;
 
-    @Column(nullable = true, name = "home_address")
-    private String home_address;
+    @Column(name = "home_address")
+    private String homeAddress;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "education")
+    @JoinColumn(name = "education_id")
     @ToString.Exclude
-    private Educational_institutions education;
+    private EducationalInstitution education;
 }

@@ -13,7 +13,8 @@ import jakarta.persistence.*;
 @RequiredArgsConstructor
 @AllArgsConstructor
 
-public class Selected_vacancies implements CommonEntity<Long>{
+public class SelectedVacancy implements CommonEntity<Long> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, name = "record_id")
@@ -23,11 +24,11 @@ public class Selected_vacancies implements CommonEntity<Long>{
     @JoinColumn(nullable = false, name = "vacancy_id")
     @ToString.Exclude
     @NonNull
-    private Vacancy vacancy_id;
+    private Vacancy vacancy;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "applicant_id")
     @ToString.Exclude
     @NonNull
-    private Site_user applicant_id;
+    private SiteUser applicant;
 }

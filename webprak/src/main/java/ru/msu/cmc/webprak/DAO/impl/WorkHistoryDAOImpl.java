@@ -7,26 +7,26 @@ import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import ru.msu.cmc.webprak.DAO.Work_historyDAO;
-import ru.msu.cmc.webprak.models.Site_user;
-import ru.msu.cmc.webprak.models.Work_history;
+import ru.msu.cmc.webprak.models.SiteUser;
+import ru.msu.cmc.webprak.models.WorkHistory;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class Work_historyDAOImpl extends CommonDAOImpl<Work_history, Long> implements Work_historyDAO {
+public class WorkHistoryDAOImpl extends CommonDAOImpl<WorkHistory, Long> implements Work_historyDAO {
 
-    public Work_historyDAOImpl() {
-        super(Work_history.class);
+    public WorkHistoryDAOImpl() {
+        super(WorkHistory.class);
     }
 
     @Override
-    public List<Work_history> findByCriteria(String vacancyName, Site_user applicant, Site_user company, Long minSalary, LocalDate startDate, LocalDate endDate) {
+    public List<WorkHistory> findByCriteria(String vacancyName, SiteUser applicant, SiteUser company, Long minSalary, LocalDate startDate, LocalDate endDate) {
         try (Session session = sessionFactory.openSession()) {
             CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<Work_history> query = builder.createQuery(Work_history.class);
-            Root<Work_history> root = query.from(Work_history.class);
+            CriteriaQuery<WorkHistory> query = builder.createQuery(WorkHistory.class);
+            Root<WorkHistory> root = query.from(WorkHistory.class);
 
             List<Predicate> predicates = new ArrayList<>();
 

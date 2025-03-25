@@ -16,7 +16,8 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 @AllArgsConstructor
 
-public class Vacancy implements CommonEntity<Long>{
+public class Vacancy implements CommonEntity<Long> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, name = "vacancy_id")
@@ -24,13 +25,13 @@ public class Vacancy implements CommonEntity<Long>{
 
     @Column(nullable = false, name = "vacancy_name")
     @NonNull
-    private String vacancy_name;
+    private String vacancyName;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "company_id")
     @ToString.Exclude
     @NonNull
-    private Site_user company_id;
+    private SiteUser company;
 
     @Column(columnDefinition = "TEXT", name = "description")
     private String description;
@@ -41,9 +42,9 @@ public class Vacancy implements CommonEntity<Long>{
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "education")
     @ToString.Exclude
-    private Educational_institutions education;
+    private EducationalInstitution education;
 
     @Column(nullable = false, name = "number_of_views")
     @ColumnDefault("0")
-    private Long number_of_views;
+    private Long numberOfViews;
 }

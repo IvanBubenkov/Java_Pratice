@@ -5,7 +5,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import ru.msu.cmc.webprak.DAO.ResumeDAO;
 import ru.msu.cmc.webprak.models.Resume;
@@ -53,10 +52,41 @@ public class ResumeDAOImpl extends CommonDAOImpl<Resume, Long> implements Resume
     }
 
     @Override
-    public List<Resume> findTopResumesByViews() {
+    public Long getNumberOfViews(Long resumeId) {
         try (Session session = sessionFactory.openSession()) {
             return session.createQuery(
-                            "FROM Resume ORDER BY number_of_views DESC", Resume.class)
+                            "SELECT number_of_views FROM Resume WHERE id = :resumeId", Long.class)
+                    .setParameter("resumeId", resumeId)
+                    .uniqueResult();
+        }
+    }
+
+    @Override
+    public void setNumberOfViews(Long resumeId, Long newNumberOfViews) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            // Обновляем количество просмотров в базе данных
+            session.createQuery(
+                            "UPDATE Resume SET number_of_views = :newNumberOfViews WHERE id = :resumeId")
+                    .setParameter("newNumberOfViews", newNumberOfViews)
+                    .setParameter("resumeId", resumeId)
+                    .executeUpdate();
+
+            session.getTransaction().commit();
+        }
+    }
+
+    @Override
+    public List<Resume> findTopResumesByViews() {
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Resume> cq = cb.createQuery(Resume.class);
+            Root<Resume> root = cq.from(Resume.class);
+
+            cq.orderBy(cb.desc(root.get("number_of_views")));
+
+            return session.createQuery(cq)
                     .setMaxResults(TOP_RESUMES_LIMIT)
                     .getResultList();
         }
@@ -64,13 +94,9 @@ public class ResumeDAOImpl extends CommonDAOImpl<Resume, Long> implements Resume
 
     @Override
     public void incrementViews(Long resumeId) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            Query query = session.createQuery(
-                    "UPDATE Resume SET number_of_views = number_of_views + 1 WHERE id = :resumeId");
-            query.setParameter("resumeId", resumeId);
-            query.executeUpdate();
-            session.getTransaction().commit();
+        Long currentViews = getNumberOfViews(resumeId);
+        if (currentViews != null) {
+            setNumberOfViews(resumeId, currentViews + 1);
         }
     }
 

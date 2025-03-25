@@ -13,7 +13,8 @@ import jakarta.persistence.*;
 @RequiredArgsConstructor
 @AllArgsConstructor
 
-public class User_statuses implements CommonEntity<Long>{
+public class UserStatus implements CommonEntity<Long> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, name = "status_id")
@@ -21,5 +22,5 @@ public class User_statuses implements CommonEntity<Long>{
 
     @Column(nullable = false, name = "status_name")
     @NonNull
-    private String status_name;
+    private String statusName;
 }

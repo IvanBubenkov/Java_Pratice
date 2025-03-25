@@ -15,7 +15,8 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @AllArgsConstructor
 
-public class Work_history implements CommonEntity<Long>{
+public class WorkHistory implements CommonEntity<Long> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, name = "record_id")
@@ -23,27 +24,27 @@ public class Work_history implements CommonEntity<Long>{
 
     @Column(nullable = false, name = "vacancy_name")
     @NonNull
-    private String vacancy_name;
+    private String vacancyName;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "applicant_id")
     @ToString.Exclude
     @NonNull
-    private Site_user applicant_id;
+    private SiteUser applicant;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "company_id")
     @ToString.Exclude
     @NonNull
-    private Site_user company_id;
+    private SiteUser company;
 
     @Column(nullable = false, name = "salary")
     @NonNull
     private Long salary;
 
     @Column(nullable = false, name = "date_start")
-    private LocalDate date_start;
+    private LocalDate dateStart;
 
     @Column(name = "date_end")
-    private LocalDate date_end;
+    private LocalDate dateEnd;
 }

@@ -13,7 +13,8 @@ import jakarta.persistence.*;
 @RequiredArgsConstructor
 @AllArgsConstructor
 
-public class Roles implements CommonEntity<Long>{
+public class Role implements CommonEntity<Long> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, name = "role_id")
@@ -21,5 +22,5 @@ public class Roles implements CommonEntity<Long>{
 
     @Column(nullable = false, name = "role_name")
     @NonNull
-    private String role_name;
+    private String roleName;
 }

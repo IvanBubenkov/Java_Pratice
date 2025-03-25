@@ -16,7 +16,8 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 @AllArgsConstructor
 
-public class Resume implements CommonEntity<Long>{
+public class Resume implements CommonEntity<Long> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, name = "resume_id")
@@ -26,16 +27,16 @@ public class Resume implements CommonEntity<Long>{
     @JoinColumn(nullable = false, name = "user_id")
     @ToString.Exclude
     @NonNull
-    private Site_user user_id;
+    private SiteUser user;
 
     @Column(name = "min_salary_req", precision = 10, scale = 2)
-    private BigDecimal min_salary_req;
+    private BigDecimal minSalaryRequirement;
 
     @Column(nullable = false, name = "number_of_views")
     @ColumnDefault("0")
-    private Long number_of_views;
+    private Long numberOfViews;
 
     @Column(nullable = false, name = "resume_name")
     @NonNull
-    private String resume_name;
+    private String resumeName;
 }
