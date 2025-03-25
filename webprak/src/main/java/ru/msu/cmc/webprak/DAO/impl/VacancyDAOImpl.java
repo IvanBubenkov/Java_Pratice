@@ -5,7 +5,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import ru.msu.cmc.webprak.DAO.VacancyDAO;
 import ru.msu.cmc.webprak.models.EducationalInstitution;
@@ -35,12 +34,12 @@ public class VacancyDAOImpl extends CommonDAOImpl<Vacancy, Long> implements Vaca
 
             // Фильтр по имени вакансии (LIKE %имя%)
             if (vacancyName != null) {
-                predicates.add(builder.like(root.get("vacancy_name"), likeExpr(vacancyName)));
+                predicates.add(builder.like(root.get("vacancyName"), likeExpr(vacancyName)));
             }
 
             // Фильтр по ID компании (точное совпадение)
             if (companyId != null) {
-                predicates.add(builder.equal(root.get("company_id").get("id"), companyId));
+                predicates.add(builder.equal(root.get("company").get("id"), companyId));
             }
 
             // Фильтр по минимальной зарплате (>= minSalary)
@@ -66,10 +65,13 @@ public class VacancyDAOImpl extends CommonDAOImpl<Vacancy, Long> implements Vaca
     @Override
     public List<Vacancy> findTopVacanciesByViews() {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery(
-                            "FROM Vacancy ORDER BY number_of_views DESC", Vacancy.class)
-                    .setMaxResults(TOP_RESUMES_LIMIT)  // Ограничиваем количество записей
-                    .getResultList();
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Vacancy> query = builder.createQuery(Vacancy.class);
+            Root<Vacancy> root = query.from(Vacancy.class);
+
+            query.select(root).orderBy(builder.desc(root.get("numberOfViews")));
+
+            return session.createQuery(query).setMaxResults(TOP_RESUMES_LIMIT).getResultList();
         }
     }
 
@@ -77,10 +79,16 @@ public class VacancyDAOImpl extends CommonDAOImpl<Vacancy, Long> implements Vaca
     public void incrementViews(Long vacancyId) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            Query query = session.createQuery(
-                    "UPDATE Vacancy SET number_of_views = number_of_views + 1 WHERE id = :vacancyId");
-            query.setParameter("vacancyId", vacancyId);
-            query.executeUpdate();
+
+            // Загружаем вакансию по ID
+            Vacancy vacancy = session.get(Vacancy.class, vacancyId);
+
+            if (vacancy != null) {
+                // Инкрементируем количество просмотров
+                vacancy.setNumberOfViews(vacancy.getNumberOfViews() + 1);
+                session.update(vacancy);  // Обновляем запись
+            }
+
             session.getTransaction().commit();
         }
     }

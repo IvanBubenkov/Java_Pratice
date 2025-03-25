@@ -32,17 +32,17 @@ public class WorkHistoryDAOImpl extends CommonDAOImpl<WorkHistory, Long> impleme
 
             // Фильтрация по имени вакансии (с использованием LIKE)
             if (vacancyName != null && !vacancyName.isEmpty()) {
-                predicates.add(builder.like(root.get("vacancy_name"), "%" + vacancyName + "%"));
+                predicates.add(builder.like(root.get("vacancyName"), "%" + vacancyName + "%"));
             }
 
-            // Фильтрация по applicant_id (если не null)
+            // Фильтрация по applicant (если не null)
             if (applicant != null) {
-                predicates.add(builder.equal(root.get("applicant_id"), applicant));
+                predicates.add(builder.equal(root.get("applicant"), applicant));
             }
 
-            // Фильтрация по company_id (если не null)
+            // Фильтрация по company (если не null)
             if (company != null) {
-                predicates.add(builder.equal(root.get("company_id"), company));
+                predicates.add(builder.equal(root.get("company"), company));
             }
 
             // Фильтрация по минимальной зарплате (>= minSalary)
@@ -52,11 +52,11 @@ public class WorkHistoryDAOImpl extends CommonDAOImpl<WorkHistory, Long> impleme
 
             // Фильтрация по датам (если заданы)
             if (startDate != null) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("date_start"), startDate));
+                predicates.add(builder.greaterThanOrEqualTo(root.get("dateStart"), startDate));
             }
 
             if (endDate != null) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("date_end"), endDate));
+                predicates.add(builder.lessThanOrEqualTo(root.get("dateEnd"), endDate));
             }
 
             // Применяем все условия фильтрации
