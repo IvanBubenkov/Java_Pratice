@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.msu.cmc.webprak.DAO.CommonDAO;
 import ru.msu.cmc.webprak.models.CommonEntity;
 
@@ -16,10 +17,9 @@ import java.util.Collection;
 public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Serializable> implements CommonDAO<T, ID> {
 
     protected SessionFactory sessionFactory;
-
     protected Class<T> persistentClass;
 
-    public CommonDAOImpl(Class<T> entityClass){
+    public CommonDAOImpl(Class<T> entityClass) {
         this.persistentClass = entityClass;
     }
 
@@ -28,70 +28,55 @@ public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Seria
         this.sessionFactory = sessionFactory.getObject();
     }
 
+    @Transactional
     @Override
     public T getById(ID id) {
-        try (Session session = sessionFactory.openSession()) {
-            return session.get(persistentClass, id);
-        }
+        return sessionFactory.getCurrentSession().get(persistentClass, id);
     }
 
+    @Transactional
     @Override
     public Collection<T> getAll() {
-        try (Session session = sessionFactory.openSession()) {
-            CriteriaQuery<T> criteriaQuery = session.getCriteriaBuilder().createQuery(persistentClass);
-            criteriaQuery.from(persistentClass);
-            return session.createQuery(criteriaQuery).getResultList();
-        }
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaQuery<T> criteriaQuery = session.getCriteriaBuilder().createQuery(persistentClass);
+        criteriaQuery.from(persistentClass);
+        return session.createQuery(criteriaQuery).getResultList();
     }
 
+    @Transactional
     @Override
     public void save(T entity) {
-        try (Session session = sessionFactory.openSession()) {
-            if (entity.getId() != null) {
-                entity.setId(null);
-            }
-            session.beginTransaction();
-            session.saveOrUpdate(entity);
-            session.getTransaction().commit();
+        if (entity.getId() != null) {
+            entity.setId(null); // Новый объект, если у него есть ID
         }
+        sessionFactory.getCurrentSession().saveOrUpdate(entity);
     }
 
+    @Transactional
     @Override
     public void saveCollection(Collection<T> entities) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            for (T entity : entities) {
-                this.save(entity);
-            }
-            session.getTransaction().commit();
+        Session session = sessionFactory.getCurrentSession();
+        for (T entity : entities) {
+            this.save(entity);
         }
     }
 
+    @Transactional
     @Override
     public void update(T entity) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.update(entity);
-            session.getTransaction().commit();
-        }
+        sessionFactory.getCurrentSession().update(entity);
     }
 
+    @Transactional
     @Override
     public void delete(T entity) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.delete(entity);
-            session.getTransaction().commit();
-        }
+        sessionFactory.getCurrentSession().delete(entity);
     }
 
+    @Transactional
     @Override
     public void deleteById(ID id) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            T entity = getById(id);
-            session.delete(entity);
-            session.getTransaction().commit();
-        }
+        T entity = getById(id);
+        sessionFactory.getCurrentSession().delete(entity);
     }
 }
