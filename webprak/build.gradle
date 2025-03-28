@@ -24,19 +24,23 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
-	annotationProcessor 'org.projectlombok:lombok'
+	// Основные зависимости Spring Boot
+	implementation 'org.springframework.boot:spring-boot-starter-web' // Включает поддержку REST API
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA + Hibernate
+	implementation 'org.springframework.boot:spring-boot-starter-validation' // Валидация данных
+	implementation 'org.springframework.boot:spring-boot-starter-actuator' // Мониторинг приложения
+
+	// База данных
+	runtimeOnly 'org.postgresql:postgresql' // Драйвер для PostgreSQL (замени, если используешь другую БД)
+
+	// Lombok для сокращения шаблонного кода
+	compileOnly 'org.projectlombok:lombok:1.18.30'
+	annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+	// Инструменты тестирования
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-	implementation 'org.hibernate:hibernate-core:6.1.5.Final'
-	implementation 'jakarta.persistence:jakarta.persistence-api:3.0.0'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
 tasks.named('test') {
