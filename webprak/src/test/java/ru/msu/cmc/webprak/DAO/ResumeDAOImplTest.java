@@ -17,8 +17,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(properties = "spring.main.lazy-initialization=true",
-        classes = {ResumeDAOImpl.class})
+@SpringBootTest(properties = "spring.main.lazy-initialization=true")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application.properties")
 public class ResumeDAOImplTest {
