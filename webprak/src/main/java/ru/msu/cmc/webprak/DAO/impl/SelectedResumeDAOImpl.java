@@ -1,7 +1,5 @@
 package ru.msu.cmc.webprak.DAO.impl;
 
-
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
