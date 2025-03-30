@@ -29,13 +29,13 @@ public class SiteUser implements CommonEntity<Long> {
     private String password;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "role_id")
+    @JoinColumn(nullable = false, name = "role")
     @ToString.Exclude
     @NonNull
     private Role role;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "status_id")
+    @JoinColumn(nullable = false, name = "status")
     @ToString.Exclude
     @NonNull
     private UserStatus status;
@@ -52,7 +52,7 @@ public class SiteUser implements CommonEntity<Long> {
     private String homeAddress;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "education_id")
+    @JoinColumn(name = "education")
     @ToString.Exclude
     private EducationalInstitution education;
 }
