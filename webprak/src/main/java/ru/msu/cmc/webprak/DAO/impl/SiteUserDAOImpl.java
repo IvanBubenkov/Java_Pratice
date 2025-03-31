@@ -5,6 +5,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import ru.msu.cmc.webprak.DAO.SiteUserDAO;
 import ru.msu.cmc.webprak.models.EducationalInstitution;
@@ -57,6 +58,25 @@ public class SiteUserDAOImpl extends CommonDAOImpl<SiteUser, Long> implements Si
             query.select(root).where(predicates.toArray(new Predicate[0]));
 
             return session.createQuery(query).getResultList();
+        }
+    }
+
+    @Override
+    public SiteUser getUserByLogin(String login) {
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<SiteUser> query = builder.createQuery(SiteUser.class);
+            Root<SiteUser> root = query.from(SiteUser.class);
+
+            // Условие поиска по логину
+            Predicate condition = builder.equal(root.get("login"), login);
+            query.select(root).where(condition);
+
+            Query<SiteUser> q = session.createQuery(query);
+            List<SiteUser> result = q.getResultList();
+
+            // Возвращаем первого пользователя или null
+            return result.isEmpty() ? null : result.get(0);
         }
     }
 }

@@ -10,4 +10,5 @@ import java.util.List;
 public interface SiteUserDAO extends CommonDAO<SiteUser, Long>{
     SiteUser findByLogin(String login);
     List<SiteUser> findByCriteria(Role role, UserStatus status, EducationalInstitution education);
+    SiteUser getUserByLogin(String login);
 }
