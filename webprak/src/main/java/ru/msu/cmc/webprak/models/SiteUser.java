@@ -55,4 +55,23 @@ public class SiteUser implements CommonEntity<Long> {
     @JoinColumn(name = "education")
     @ToString.Exclude
     private EducationalInstitution education;
+
+    public SiteUser(String login,
+                    String password,
+                    Role role,
+                    UserStatus status,
+                    String fullNameCompany,
+                    String email,
+                    String homeAddress,
+                    EducationalInstitution education) {
+
+        this.login = login;
+        this.password = password;
+        this.role = role;
+        this.status = status;
+        this.fullNameCompany = fullNameCompany;
+        this.email = email;
+        this.homeAddress = homeAddress;
+        this.education = education;
+    }
 }

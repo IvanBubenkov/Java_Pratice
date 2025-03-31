@@ -39,4 +39,15 @@ public class Resume implements CommonEntity<Long> {
     @Column(nullable = false, name = "resume_name")
     @NonNull
     private String resumeName;
+
+    public Resume(SiteUser user,
+                  BigDecimal minSalaryRequirement,
+                  long numberOfViews,
+                  String resumeName) {
+
+        this.user = user;
+        this.minSalaryRequirement = minSalaryRequirement;
+        this.numberOfViews = numberOfViews;
+        this.resumeName = resumeName;
+    }
 }

@@ -47,4 +47,20 @@ public class Vacancy implements CommonEntity<Long> {
     @Column(nullable = false, name = "number_of_views")
     @ColumnDefault("0")
     private Long numberOfViews;
+
+    public Vacancy(
+            String vacancyName,
+            String description,
+            BigDecimal minSalary,
+            SiteUser company,
+            EducationalInstitution education,
+            int numberOfViews
+    ) {
+        this.vacancyName = vacancyName;
+        this.company = company;
+        this.description = description;
+        this.minSalary = minSalary;
+        this.education = education;
+        this.numberOfViews = (long) numberOfViews;
+    }
 }
