@@ -74,4 +74,20 @@ public class SiteUser implements CommonEntity<Long> {
         this.homeAddress = homeAddress;
         this.education = education;
     }
+    public SiteUser(String login,
+                    String password,
+                    Role role,
+                    UserStatus status,
+                    String fullNameCompany,
+                    String email,
+                    String homeAddress) {
+
+        this.login = login;
+        this.password = password;
+        this.role = role;
+        this.status = status;
+        this.fullNameCompany = fullNameCompany;
+        this.email = email;
+        this.homeAddress = homeAddress;
+    }
 }
