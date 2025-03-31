@@ -63,6 +63,8 @@ public class ResumeDAOImplTest {
 
         List<Resume> result5 = resumeDAO.findByCriteria("Неизвестное резюме", null, null);
         assertTrue(result5.isEmpty());
+        List<Resume> result6 = resumeDAO.findByCriteria(null, null, null);
+        assertEquals(10, result6.size());
     }
 
     @Test
