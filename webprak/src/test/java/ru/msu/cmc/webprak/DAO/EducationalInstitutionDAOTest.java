@@ -75,6 +75,25 @@ public class EducationalInstitutionDAOTest {
         assertNull(educationalInstitutionDAO.getById(id));
     }
 
+    @Test
+    @DisplayName("Test getEducationalInstitutionByName() method")
+    void testGetEducationalInstitutionByName() {
+        EducationalInstitution institution = educationalInstitutionDAO.getEducationalInstitutionByName("Бакалавриат");
+        assertNotNull(institution, "Должно найти учреждение с названием 'Бакалавриат'");
+        assertEquals(3L, institution.getId(), "ID учреждения должно соответствовать ожидаемому");
+
+        EducationalInstitution nonExistent = educationalInstitutionDAO.getEducationalInstitutionByName("Несуществующее образование");
+        assertNull(nonExistent, "Должно возвращать null для несуществующего названия");
+
+        EducationalInstitution dup1 = new EducationalInstitution("Дубликат");
+        EducationalInstitution dup2 = new EducationalInstitution("Дубликат");
+        educationalInstitutionDAO.save(dup1);
+        educationalInstitutionDAO.save(dup2);
+
+        EducationalInstitution result = educationalInstitutionDAO.getEducationalInstitutionByName("Дубликат");
+        assertNull(result, "Должно возвращать null при нескольких совпадениях");
+    }
+
     @BeforeEach
     void beforeEach() {
         List<EducationalInstitution> institutions = new ArrayList<>();
