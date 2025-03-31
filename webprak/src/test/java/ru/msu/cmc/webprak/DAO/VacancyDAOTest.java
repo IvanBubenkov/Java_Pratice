@@ -62,6 +62,9 @@ public class VacancyDAOTest {
         // 4. Комбинированный поиск
         List<Vacancy> result4 = vacancyDAO.findByCriteria("Разработчик", companyUser1.getId(), BigDecimal.valueOf(100000), university);
         assertEquals(1, result4.size());
+
+        List<Vacancy> result5 = vacancyDAO.findByCriteria(null, null, null, null);
+        assertEquals(3, result5.size());
     }
 
     @Test
@@ -79,6 +82,8 @@ public class VacancyDAOTest {
         Long initialViews = vacancy.getNumberOfViews();
         vacancyDAO.incrementViews(1L);
         assertEquals(initialViews + 1, vacancyDAO.getById(1L).getNumberOfViews());
+
+        assertDoesNotThrow(() -> vacancyDAO.incrementViews(4L), "Метод не должен выбрасывать исключение");
     }
 
     @BeforeEach
