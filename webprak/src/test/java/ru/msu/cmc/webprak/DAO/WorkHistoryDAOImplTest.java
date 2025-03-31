@@ -43,6 +43,41 @@ public class WorkHistoryDAOImplTest {
     void testFindByCriteria() {
         // Test applicant filter
         List<WorkHistory> result = workHistoryDAO.findByCriteria(
+                "Java Разработчик", null, null, null, null, null
+        );
+        assertEquals(1, result.size());
+
+        result = workHistoryDAO.findByCriteria(
+                "", null, null, null, null, null
+        );
+        assertEquals(2, result.size());
+
+        result = workHistoryDAO.findByCriteria(
+                null, applicant, null, null, null, null
+        );
+        assertEquals(2, result.size());
+
+        result = workHistoryDAO.findByCriteria(
+                null, null, company, null, null, null
+        );
+        assertEquals(2, result.size());
+
+        result = workHistoryDAO.findByCriteria(
+                null, null, null, 0L, null, null
+        );
+        assertEquals(2, result.size());
+
+        result = workHistoryDAO.findByCriteria(
+                null, null, null, null, LocalDate.of(2021, 1, 1), null
+        );
+        assertEquals(2, result.size());
+
+        result = workHistoryDAO.findByCriteria(
+                null, null, null, null, null, LocalDate.of(2023, 6, 1)
+        );
+        assertEquals(2, result.size());
+
+        result = workHistoryDAO.findByCriteria(
                 null, applicant, null, null, null, null
         );
         assertEquals(2, result.size());
