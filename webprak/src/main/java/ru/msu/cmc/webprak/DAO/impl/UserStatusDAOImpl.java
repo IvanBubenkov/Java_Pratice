@@ -29,7 +29,7 @@ public class UserStatusDAOImpl extends CommonDAOImpl<UserStatus, Long> implement
 
             Query<UserStatus> resultQuery = session.createQuery(query);
             List<UserStatus> statuses = resultQuery.getResultList();
-            
+
             return statuses.size() == 1 ? statuses.get(0) : null;
         }
     }
