@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Главная страница</title>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .card-list {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #3498db;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+        }
+
+        .card .btn-details {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: 2px solid #3498db;
+            border-radius: 6px;
+            color: #3498db;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .card .btn-details:hover {
+            background-color: #3498db;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Добро пожаловать в CareerHub!</h1>
+
+    <div class="button-group">
+        <a class="btn btn-primary" href="/vacancies/search">Поиск вакансий</a>
+        <a class="btn btn-primary" href="/resumes/search">Поиск резюме</a>
+        <a class="btn btn-primary" href="/profile">Личный кабинет</a>
+    </div>
+
+    <h2>🔥 Популярные вакансии</h2>
+    <div class="card-list">
+        <div class="card" th:each="vacancy : ${topVacancies}">
+            <h3 th:text="${vacancy.vacancyName}"></h3>
+            <p th:text="${vacancy.company.fullNameCompany}"></p>
+            <a class="btn-details" th:href="'/vacancies/' + ${vacancy.id}">Подробнее →</a>
+        </div>
+    </div>
+
+    <h2 style="margin-top: 3rem;">🌟 Интересные резюме</h2>
+    <div class="card-list">
+        <div class="card" th:each="resume : ${topResumes}">
+            <h3 th:text="${resume.resumeName}"></h3>
+            <p th:text="${resume.user.fullNameCompany}"></p>
+            <a class="btn-details" th:href="'/resumes/' + ${resume.id}">Подробнее →</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
