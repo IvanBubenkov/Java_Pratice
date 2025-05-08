@@ -16,6 +16,39 @@
             background-color: #f5f5f5;
             color: #333;
             line-height: 1.6;
+            padding-top: 80px; /* Увеличили отступ для большего лого */
+        }
+
+        /* Измененный цвет верхней панели */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px; /* Увеличили высоту */
+            background: #ffffff; /* Белый фон */
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            border-bottom: 1px solid #e0e0e0; /* Тонкая граница */
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Увеличенный логотип */
+        .logo {
+            height: 50px; /* Увеличили размер */
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
         }
 
         .container {
@@ -99,17 +132,62 @@
             background-color: #3498db;
             color: white;
         }
+
+        /* Дополнительные стили для шапки */
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem; /* Увеличили расстояние между пунктами */
+        }
+
+        /* Измененные стили для навигации */
+        .nav-links a {
+            color: #2c3e50; /* Темно-синий вместо белого */
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-size: 1.05rem;
+        }
+
+        .nav-links a:hover {
+            color: #3498db; /* Синий при наведении */
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        /* Активный пункт меню */
+        .nav-links a.active {
+            color: #3498db;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>Добро пожаловать в CareerHub!</h1>
-
-    <div class="button-group">
-        <a class="btn btn-primary" href="/vacancies/search">Поиск вакансий</a>
-        <a class="btn btn-primary" href="/resumes/search">Поиск резюме</a>
-        <a class="btn btn-primary" href="/profile">Личный кабинет</a>
+<!-- Обновленная верхняя панель -->
+<div class="top-bar">
+    <div class="header-content">
+        <a href="/" class="logo-container">
+            <img src="/img/logo.png" alt="QuestBoard" class="logo">
+        </a>
+        <div class="nav-links">
+            <a href="/vacancies/search">Поиск вакансий</a>
+            <a href="/resumes/search">Поиск резюме</a>
+            <a href="/profile">Личный кабинет</a>
+        </div>
     </div>
+</div>
+
+<div class="container">
+    <h1>Добро пожаловать в QuestBoard!</h1>
 
     <h2>🔥 Популярные вакансии</h2>
     <div class="card-list">
