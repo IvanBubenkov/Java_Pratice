@@ -24,24 +24,26 @@ repositories {
 }
 
 dependencies {
-	// Основные зависимости Spring Boot
-	implementation 'org.springframework.boot:spring-boot-starter-web' // Включает поддержку REST API
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA + Hibernate
-	implementation 'org.springframework.boot:spring-boot-starter-validation' // Валидация данных
-	implementation 'org.springframework.boot:spring-boot-starter-actuator' // Мониторинг приложения
+	// Spring Boot: Web, JPA (Hibernate), Validation, Actuator
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-	// База данных
-	runtimeOnly 'org.postgresql:postgresql' // Драйвер для PostgreSQL (замени, если используешь другую БД)
+	// Thymeleaf (совместим с Spring Boot 3.x)
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-	// Lombok для сокращения шаблонного кода
-	compileOnly 'org.projectlombok:lombok:1.18.30'
-	annotationProcessor 'org.projectlombok:lombok:1.18.30'
+	// PostgreSQL JDBC драйвер
+	runtimeOnly 'org.postgresql:postgresql'
 
-	// Инструменты тестирования
+	// Lombok (для аннотаций @Getter, @Setter и т.п.)
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Тестирование (JUnit 5)
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api'
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()
