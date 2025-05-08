@@ -8,7 +8,6 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
 
     @RequestMapping("/error")
     public String handleError() {
-        // Provide your custom error view or message
-        return "error";  // Ensure "errorPage" corresponds to an actual view
+        return "error";
     }
 }

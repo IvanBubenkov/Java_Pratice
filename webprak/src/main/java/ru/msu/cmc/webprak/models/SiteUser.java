@@ -1,8 +1,12 @@
 package ru.msu.cmc.webprak.models;
 
 import lombok.*;
-
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import jakarta.persistence.*;
+import java.util.Collection;
+import java.util.Collections;
 
 @Entity
 @Table(name = "site_user")
@@ -12,8 +16,7 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
-
-public class SiteUser implements CommonEntity<Long> {
+public class SiteUser implements CommonEntity<Long>, UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,6 +59,41 @@ public class SiteUser implements CommonEntity<Long> {
     @ToString.Exclude
     private EducationalInstitution education;
 
+    /* Реализация методов UserDetails */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(new SimpleGrantedAuthority(
+                "ROLE_" + role.getRoleName().toUpperCase()
+        ));
+    }
+
+    @Override
+    public String getUsername() {
+        return login;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        // Аккаунт не заблокирован, если статус "Активный" (1)
+        return status.getId() == 1L;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    // Конструкторы
     public SiteUser(String login,
                     String password,
                     Role role,
@@ -64,7 +102,6 @@ public class SiteUser implements CommonEntity<Long> {
                     String email,
                     String homeAddress,
                     EducationalInstitution education) {
-
         this.login = login;
         this.password = password;
         this.role = role;
@@ -74,6 +111,7 @@ public class SiteUser implements CommonEntity<Long> {
         this.homeAddress = homeAddress;
         this.education = education;
     }
+
     public SiteUser(String login,
                     String password,
                     Role role,
@@ -81,7 +119,6 @@ public class SiteUser implements CommonEntity<Long> {
                     String fullNameCompany,
                     String email,
                     String homeAddress) {
-
         this.login = login;
         this.password = password;
         this.role = role;

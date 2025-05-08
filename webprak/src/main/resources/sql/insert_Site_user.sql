@@ -1,3 +1,4 @@
+
 INSERT INTO Site_user (login, password, role, Status, full_name_company, email, home_address, education) VALUES
     ('techprogress', 'pass1', 2, 3, 'ООО "ТехПрогресс"', 'techprogress@gmail.com', 'Москва, ул. Ленина, д. 10', NULL),
     ('stroygarant', 'pass2', 2, 3, 'АО "СтройГарант"', 'stroygarant@yandex.ru', 'Санкт-Петербург, ул. Невский, д. 25', NULL),

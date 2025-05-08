@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Личный кабинет | QuestBoard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      padding-top: 5rem;
+    }
+    .profile-header {
+      background-color: white;
+      border-radius: 10px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .profile-section {
+      background-color: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #0d6efd;
+    }
+    .navbar {
+      background-color: #212529;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="/">QuestBoard</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/vacancies/search">Поиск вакансий</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/resumes/search">Поиск резюме</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/profile">Личный кабинет</a>
+        </li>
+        <li class="nav-item">
+          <form th:action="@{/logout}" method="post">
+            <button type="submit" class="nav-link btn btn-link">Выйти</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="profile-header">
+    <div class="row">
+      <div class="col-md-2 text-center">
+        <img src="/img/avatar-placeholder.png" class="avatar mb-3">
+      </div>
+      <div class="col-md-10">
+        <h2 th:text="${user.fullNameCompany}"></h2>
+        <p class="text-muted" th:text="${user.email}"></p>
+        <p th:text="${user.homeAddress} ?: 'Адрес не указан'"></p>
+        <a href="/profile/edit" class="btn btn-outline-primary">Редактировать профиль</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Для соискателей -->
+  <div th:if="${user.role.name == 'Соискатель'}">
+    <div class="profile-section">
+      <h4>Мои резюме</h4>
+      <div th:each="resume : ${resumes}">
+        <h5 th:text="${resume.resumeName}"></h5>
+        <p th:text="${resume.minSalaryRequirement} ? 'Минимальная зарплата: ' + ${resume.minSalaryRequirement} + ' руб.' : 'Зарплата не указана'"></p>
+        <a th:href="@{/applicant/resume/edit/} + ${resume.id}" class="btn btn-sm btn-outline-primary">Редактировать</a>
+        <a th:href="@{/applicant/resume/delete/} + ${resume.id}" class="btn btn-sm btn-outline-danger">Удалить</a>
+      </div>
+      <a href="/applicant/resume/new" class="btn btn-primary mt-3">Добавить резюме</a>
+    </div>
+
+    <div class="profile-section">
+      <h4>История работы</h4>
+      <div th:each="work : ${workHistory}">
+        <h5 th:text="${work.vacancyName}"></h5>
+        <p th:text="${work.company.fullNameCompany}"></p>
+        <p th:text="${work.salary} + ' руб.'"></p>
+        <p th:text="${#temporals.format(work.dateStart, 'dd.MM.yyyy')} + ' - ' + ${work.dateEnd} ? #temporals.format(work.dateEnd, 'dd.MM.yyyy') : 'по настоящее время'"></p>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <h4>Избранные вакансии</h4>
+      <div th:each="vacancy : ${favoriteVacancies}">
+        <h5 th:text="${vacancy.vacancy.vacancyName}"></h5>
+        <p th:text="${vacancy.vacancy.company.fullNameCompany}"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Для работодателей -->
+  <div th:if="${user.role.name == 'Работодатель'}">
+    <div class="profile-section">
+      <h4>Мои вакансии</h4>
+      <div th:each="vacancy : ${vacancies}">
+        <h5 th:text="${vacancy.vacancyName}"></h5>
+        <p th:text="${vacancy.minSalary} ? 'От ' + ${vacancy.minSalary} + ' руб.' : 'Зарплата не указана'"></p>
+        <a th:href="@{/employer/vacancy/edit/} + ${vacancy.id}" class="btn btn-sm btn-outline-primary">Редактировать</a>
+        <a th:href="@{/employer/vacancy/delete/} + ${vacancy.id}" class="btn btn-sm btn-outline-danger">Удалить</a>
+      </div>
+      <a href="/employer/vacancy/new" class="btn btn-primary mt-3">Добавить вакансию</a>
+    </div>
+
+    <div class="profile-section">
+      <h4>Избранные резюме</h4>
+      <div th:each="resume : ${selectedResumes}">
+        <h5 th:text="${resume.resume.resumeName}"></h5>
+        <p th:text="${resume.resume.user.fullNameCompany}"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Для администраторов -->
+  <div th:if="${user.role.name == 'Администратор'}">
+    <div class="profile-section">
+      <h4>Административная панель</h4>
+      <a href="/admin" class="btn btn-primary">Перейти в админ-панель</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

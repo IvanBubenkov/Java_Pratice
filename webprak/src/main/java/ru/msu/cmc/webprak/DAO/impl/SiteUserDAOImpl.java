@@ -63,20 +63,28 @@ public class SiteUserDAOImpl extends CommonDAOImpl<SiteUser, Long> implements Si
 
     @Override
     public SiteUser getUserByLogin(String login) {
+        System.out.println("=== DEBUG: поиск пользователя ===");
+        System.out.println("Ищем логин: '" + login + "'");
+
         try (Session session = sessionFactory.openSession()) {
+            System.out.println("Сессия открыта успешно");
+
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<SiteUser> query = builder.createQuery(SiteUser.class);
             Root<SiteUser> root = query.from(SiteUser.class);
 
-            // Условие поиска по логину
-            Predicate condition = builder.equal(root.get("login"), login);
-            query.select(root).where(condition);
+            query.select(root).where(builder.equal(root.get("login"), login));
 
-            Query<SiteUser> q = session.createQuery(query);
-            List<SiteUser> result = q.getResultList();
+            System.out.println("Сформирован запрос: " + query.toString());
 
-            // Возвращаем первого пользователя или null
-            return result.isEmpty() ? null : result.get(0);
+            SiteUser result = session.createQuery(query).uniqueResult();
+            System.out.println("Найден пользователь: " + (result != null ? result.getLogin() : "null"));
+
+            return result;
+        } catch (Exception e) {
+            System.err.println("Ошибка при поиске пользователя: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
 }
