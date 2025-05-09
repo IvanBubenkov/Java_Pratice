@@ -79,6 +79,8 @@ public class SiteUserDAOImpl extends CommonDAOImpl<SiteUser, Long> implements Si
 
             SiteUser result = session.createQuery(query).uniqueResult();
             System.out.println("Найден пользователь: " + (result != null ? result.getLogin() : "null"));
+            System.out.println("Найден пользователь: " + (result != null ? result.getPassword() : "null"));
+            System.out.println("Найден пользователь: " + (result != null ? result.getRole() : "null"));
 
             return result;
         } catch (Exception e) {
