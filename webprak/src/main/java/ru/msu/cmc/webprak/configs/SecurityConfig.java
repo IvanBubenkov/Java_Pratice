@@ -25,14 +25,16 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/auth/**", "/register/**").permitAll()
+                        .requestMatchers("/adminPanel/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")// Только для админов
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/auth")
-                        .loginProcessingUrl("/login")
+                        .loginProcessingUrl("/auth/login")
                         .usernameParameter("username")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/profile")
+                        .defaultSuccessUrl("/determine-role-redirect", true)  // Перенаправление через контроллер
                         .failureUrl("/auth?error=true")
                         .permitAll()
                 )
@@ -46,6 +48,7 @@ public class SecurityConfig {
                     if (user == null) {
                         throw new UsernameNotFoundException("User not found");
                     }
+                    System.out.println("User roles: " + user.getAuthorities());
                     return user;
                 });
 
@@ -59,7 +62,8 @@ public class SecurityConfig {
                 "/img/**",
                 "/css/**",
                 "/js/**",
-                "/webjars/**"
+                "/webjars/**",
+                "/adminPanel"
         );
     }
 

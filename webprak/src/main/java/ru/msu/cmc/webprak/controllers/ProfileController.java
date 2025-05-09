@@ -29,7 +29,7 @@ public class ProfileController {
             return "redirect:/login";
         }
 
-        boolean isEmployer = "Работодатель".equals(user.getStatus().getStatusName());
+        boolean isEmployer = "COMPANY".equals(user.getStatus().getStatusName());
         boolean isSeekingJob = "Ищет работу".equals(user.getStatus().getStatusName());
 
         model.addAttribute("user", user);

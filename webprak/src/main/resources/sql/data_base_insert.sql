@@ -4,9 +4,9 @@ INSERT INTO User_statuses (status_name) VALUES
 	('Работодатель');
 
 INSERT INTO Roles (role_name) VALUES
-	('Соискатель'),
-	('Работодатель'),
-	('Администратор');
+	('USER'),
+	('COMPANY'),
+	('ADMIN');
 
 INSERT INTO Educational_institutions (education_level) VALUES
 	('Среднее общее образование'),

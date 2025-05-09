@@ -145,15 +145,18 @@ public class AuthController {
         }
 
         String roleName = user.getRole().getRoleName().toUpperCase();
-
-        if ("Администратор".contains(roleName)) {
+        System.out.println("!!!" + "ABC");
+        if (roleName.contains("ADMIN")) {
+            System.out.println("!!!" + "ADMIN");
             return "redirect:/adminPanel";
-        } else if ("Работодатель".contains(roleName)) {
-            return "redirect:/profile";
-        } else if ("Соискатель".contains(roleName)) {
-            return "redirect:/mainPage";
+        } else if (roleName.contains("COMPANY")) {
+            System.out.println("!!!" + "COMPANY");
+            return "redirect:/profile"; // Для работодателя
+        } else if (roleName.contains("USER")) {
+            System.out.println("!!!" + "USER");
+            return "redirect:/profile"; // Для соискателя
         }
 
-        return "redirect:/mainPage";
+        return "redirect:/error";
     }
 }

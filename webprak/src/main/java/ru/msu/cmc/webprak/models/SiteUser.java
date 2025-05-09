@@ -62,9 +62,9 @@ public class SiteUser implements CommonEntity<Long>, UserDetails {
     /* Реализация методов UserDetails */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(
-                "ROLE_" + role.getRoleName().toUpperCase()
-        ));
+        String authority = "ROLE_" + role.getRoleName().toUpperCase();
+        System.out.println("[DEBUG] GrantedAuthority: " + authority); // Логируем
+        return Collections.singleton(new SimpleGrantedAuthority(authority));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class SiteUser implements CommonEntity<Long>, UserDetails {
     @Override
     public boolean isAccountNonLocked() {
         // Аккаунт не заблокирован, если статус "Активный" (1)
-        return status.getId() == 1L;
+        return true;
     }
 
     @Override
