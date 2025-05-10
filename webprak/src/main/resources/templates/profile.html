@@ -77,7 +77,7 @@
         <p class="text-muted" th:text="${user.email} ?: 'Email не указан'"></p>
         <p th:text="${user.homeAddress} ?: 'Адрес не указан'"></p>
 
-        <!-- Исправленный блок статуса -->
+        <!-- Статус только для соискателя -->
         <span class="badge"
               th:class="${user.status.statusName == 'Ищет работу'} ? 'bg-success' :
                         (${user.status.statusName == 'Не ищет работу'} ? 'bg-secondary' : 'bg-primary')">
@@ -88,42 +88,37 @@
           <a href="/profile/edit" class="btn btn-outline-primary btn-action">Редактировать профиль</a>
 
           <!-- Для соискателя -->
-          <div th:if="${!isEmployer}">
-            <a th:href="@{/work-history}" class="btn btn-outline-secondary btn-action">История работ</a>
-            <a th:href="@{/my-resumes}" class="btn btn-outline-success btn-action">Мои резюме</a>
+          <div th:if="${!isEmployer and !isAdmin}">
+            <a th:href="@{/work-history}" class="btn btn-outline-secondary btn-action">История работ пользователя</a>
+            <a th:href="@{/my-resumes}" class="btn btn-outline-success btn-action">Все резюме пользователя</a>
             <a th:href="@{/favorites}" class="btn btn-outline-warning btn-action">Избранные вакансии</a>
           </div>
 
           <!-- Для работодателя -->
           <div th:if="${isEmployer}">
-            <a th:href="@{/company-vacancies}" class="btn btn-outline-info btn-action">Мои вакансии</a>
+            <a th:href="@{/company-vacancies}" class="btn btn-outline-info btn-action">Все вакансии компании</a>
             <a th:href="@{/favorites}" class="btn btn-outline-warning btn-action">Избранные резюме</a>
           </div>
+
+          <!-- Для администратора можно позже добавить свои кнопки -->
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Блок статуса поиска работы -->
-  <div class="profile-section" th:if="${!isEmployer}">
+  <!-- Статус поиска работы -->
+  <div class="profile-section" th:if="${!isEmployer and !isAdmin}">
     <h4>Статус поиска работы</h4>
     <div class="alert"
          th:classappend="${isSeekingJob} ? 'alert-success' : 'alert-secondary'">
-      <span th:text="${isSeekingJob} ?
-           'Активно ищу новые предложения' : 'В настоящее время не рассматриваю предложения'"></span>
+      <span th:text="${isSeekingJob} ? 'Активно ищу новые предложения' : 'В настоящее время не рассматриваю предложения'"></span>
     </div>
   </div>
 
-  <!-- Блок образования -->
-  <div class="profile-section" th:if="${!isEmployer and user.education != null}">
+  <!-- Образование -->
+  <div class="profile-section" th:if="${!isEmployer and !isAdmin and user.education != null}">
     <h4>Образование</h4>
     <p th:text="${user.education.educationLevel}"></p>
-  </div>
-
-  <!-- Блок описания компании -->
-  <div class="profile-section" th:if="${isEmployer}">
-    <h4>О компании</h4>
-    <p th:text="${user.description} ?: 'Описание компании отсутствует'"></p>
   </div>
 </div>
 
