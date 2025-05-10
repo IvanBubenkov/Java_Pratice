@@ -46,10 +46,13 @@ public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Seria
     @Transactional
     @Override
     public void save(T entity) {
-        if (entity.getId() != null) {
-            entity.setId(null); // Новый объект, если у него есть ID
+        if (entity.getId() == null) {
+            // Если ID не установлен, то это новый объект, сохраняем его
+            sessionFactory.getCurrentSession().save(entity);
+        } else {
+            // Если ID уже существует, то это обновление существующего объекта
+            sessionFactory.getCurrentSession().update(entity);
         }
-        sessionFactory.getCurrentSession().saveOrUpdate(entity);
     }
 
     @Transactional

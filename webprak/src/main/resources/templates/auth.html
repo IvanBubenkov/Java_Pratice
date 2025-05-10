@@ -108,6 +108,10 @@
                 <input type="password" class="form-control" id="reg-password" name="password" required>
             </div>
             <div class="form-group">
+                <label for="confirmPassword" class="form-label">Подтвердите пароль</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <div class="form-group">
                 <label for="fullNameCompany" class="form-label">ФИО/Название компании</label>
                 <input type="text" class="form-control" id="fullNameCompany" name="fullNameCompany" required>
             </div>
@@ -116,12 +120,17 @@
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="form-group">
+                <label for="homeAddress" class="form-label">Домашний адрес</label>
+                <input type="text" class="form-control" id="homeAddress" name="homeAddress" required>
+            </div>
+            <div class="form-group">
                 <label for="userType" class="form-label">Тип пользователя</label>
                 <select class="form-select" id="userType" name="userType" required>
                     <option value="1">Соискатель</option>
                     <option value="2">Работодатель</option>
                 </select>
             </div>
+            <input type="hidden" name="roleId" id="roleId" value="1"/>
             <button type="submit" class="btn btn-success btn-auth">Зарегистрироваться</button>
         </form>
 
@@ -134,13 +143,11 @@
 
 <script>
     function switchTab(tabName) {
-        // Переключение активной вкладки
         document.querySelectorAll('.auth-tab').forEach(tab => {
             tab.classList.remove('active');
         });
         document.querySelector(`.auth-tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
 
-        // Переключение активной формы
         document.querySelectorAll('.auth-form').forEach(form => {
             form.classList.remove('active');
         });
@@ -161,12 +168,15 @@
         document.getElementById('switch-to-register').style.display = 'inline';
     });
 
-    // Показываем нужную форму при загрузке страницы
-    if(window.location.hash === '#register') {
+    if (window.location.hash === '#register') {
         switchTab('register');
         document.getElementById('switch-to-register').style.display = 'none';
         document.getElementById('switch-to-login').style.display = 'inline';
     }
+
+    document.getElementById('userType').addEventListener('change', function () {
+        document.getElementById('roleId').value = this.value;
+    });
 </script>
 </body>
 </html>

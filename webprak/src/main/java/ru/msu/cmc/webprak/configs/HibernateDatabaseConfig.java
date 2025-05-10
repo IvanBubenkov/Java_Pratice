@@ -1,5 +1,6 @@
 package ru.msu.cmc.webprak.configs;
 
+import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -61,14 +65,24 @@ public class HibernateDatabaseConfig {
     }
 
     @Bean
-    public PlatformTransactionManager hibernateTransactionManager() {
-        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-        transactionManager.setSessionFactory(sessionFactory().getObject());
-        return transactionManager;
+    public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
     }
 
     @Bean
-    public jakarta.persistence.EntityManagerFactory entityManagerFactory(SessionFactory sessionFactory) {
-        return sessionFactory;
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+        emf.setDataSource(dataSource());
+        emf.setPackagesToScan("ru.msu.cmc.webprak.models");
+        emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+
+        Properties jpaProperties = new Properties();
+        jpaProperties.setProperty("hibernate.hbm2ddl.auto", "update");
+        jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        jpaProperties.setProperty("hibernate.show_sql", "true");
+        jpaProperties.setProperty("hibernate.format_sql", "true");
+
+        emf.setJpaProperties(jpaProperties);
+        return emf;
     }
 }

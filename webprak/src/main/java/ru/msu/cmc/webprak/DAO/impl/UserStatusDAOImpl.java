@@ -33,4 +33,34 @@ public class UserStatusDAOImpl extends CommonDAOImpl<UserStatus, Long> implement
             return statuses.size() == 1 ? statuses.get(0) : null;
         }
     }
+
+    public List<UserStatus> getUserStatuses() {
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<UserStatus> query = builder.createQuery(UserStatus.class);
+            Root<UserStatus> root = query.from(UserStatus.class);
+
+            Predicate condition = builder.in(root.get("statusName")).value("Ищет работу").value("Не ищет работу");
+            query.select(root).where(condition);
+
+            Query<UserStatus> resultQuery = session.createQuery(query);
+            return resultQuery.getResultList();
+        }
+    }
+
+
+    public List<UserStatus> getCompanyStatus() {
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<UserStatus> query = builder.createQuery(UserStatus.class);
+            Root<UserStatus> root = query.from(UserStatus.class);
+
+            Predicate condition = builder.equal(root.get("statusName"), "Работодатель");
+            query.select(root).where(condition);
+
+            Query<UserStatus> resultQuery = session.createQuery(query);
+            return resultQuery.getResultList();
+        }
+    }
+
 }

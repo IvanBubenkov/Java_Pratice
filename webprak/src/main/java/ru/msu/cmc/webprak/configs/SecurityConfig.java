@@ -1,8 +1,10 @@
 package ru.msu.cmc.webprak.configs;
 
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -10,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.transaction.PlatformTransactionManager;
 import ru.msu.cmc.webprak.DAO.SiteUserDAO;
 import ru.msu.cmc.webprak.models.SiteUser;
 
@@ -26,7 +29,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/auth/**", "/register/**").permitAll()
                         .requestMatchers("/adminPanel/**").hasRole("ADMIN")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")// Только для админов
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/profile/edit/**").authenticated()  // Добавлено явное разрешение
+                        .requestMatchers("/profile/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -34,7 +39,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/auth/login")
                         .usernameParameter("username")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/determine-role-redirect", true)  // Перенаправление через контроллер
+                        .defaultSuccessUrl("/determine-role-redirect", true)
                         .failureUrl("/auth?error=true")
                         .permitAll()
                 )
