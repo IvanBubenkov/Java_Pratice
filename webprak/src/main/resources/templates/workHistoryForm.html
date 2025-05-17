@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить запись в историю работ | QuestBoard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 5rem;
+        }
+        .form-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">QuestBoard</a>
+        <!-- Остальная навигация -->
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="form-container">
+        <h2 class="mb-4">
+            <i class="bi bi-plus-circle"></i> Новая запись в истории работ
+        </h2>
+
+        <!-- Сообщение об ошибке -->
+        <div th:if="${errorMessage != null}" class="alert alert-danger mb-4">
+            <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+        </div>
+
+        <form action="/work-history/save" method="post">
+            <!-- CSRF токен для безопасности -->
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <!-- Компания -->
+            <div class="mb-3">
+                <label for="companyId" class="form-label required-field">Компания</label>
+                <select class="form-select" id="companyId" name="companyId" required>
+                    <option value="">Выберите компанию...</option>
+                    <option th:each="company : ${companies}"
+                            th:value="${company.id}"
+                            th:text="${company.fullNameCompany}"
+                            th:selected="${param.companyId != null and param.companyId[0] == company.id.toString()}">
+                    </option>
+                </select>
+            </div>
+
+            <!-- Должность -->
+            <div class="mb-3">
+                <label for="vacancyName" class="form-label required-field">Должность</label>
+                <input type="text" class="form-control" id="vacancyName" name="vacancyName" required
+                       th:value="${param.vacancyName != null} ? ${param.vacancyName[0]} : ''">
+            </div>
+
+            <!-- Зарплата -->
+            <div class="mb-3">
+                <label for="salary" class="form-label required-field">Зарплата (руб.)</label>
+                <input type="number" class="form-control" id="salary" name="salary" min="1" required
+                       th:value="${param.salary != null} ? ${param.salary[0]} : ''">
+            </div>
+
+            <!-- Даты -->
+            <div class="row mb-4">
+                <!-- Дата начала -->
+                <div class="col-md-6">
+                    <label for="dateStart" class="form-label required-field">Дата начала</label>
+                    <input type="date" class="form-control" id="dateStart" name="dateStart" required
+                           th:value="${param.dateStart != null} ? ${param.dateStart[0]} : ${T(java.time.LocalDate).now().toString()}">
+                </div>
+
+                <!-- Дата окончания -->
+                <div class="col-md-6">
+                    <label for="dateEnd" class="form-label">Дата окончания</label>
+                    <input type="date" class="form-control" id="dateEnd" name="dateEnd"
+                           th:value="${param.dateEnd != null} ? ${param.dateEnd[0]} : ''">
+                    <small class="text-muted">Оставьте пустым, если продолжаете работать</small>
+                </div>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/work-history" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Отмена
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Сохранить запись
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Установка максимальной даты (сегодня)
+        const today = new Date().toISOString().split('T')[0];
+
+        // Ограничения для даты начала
+        const dateStart = document.getElementById('dateStart');
+        if (dateStart && !dateStart.value) {
+            dateStart.value = today;
+        }
+
+        // Ограничения для даты окончания
+        const dateEnd = document.getElementById('dateEnd');
+        if (dateEnd) {
+            dateEnd.max = today;
+        }
+    });
+</script>
+</body>
+</html>
