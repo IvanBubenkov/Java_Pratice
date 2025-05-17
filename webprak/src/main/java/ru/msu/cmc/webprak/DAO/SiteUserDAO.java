@@ -7,8 +7,10 @@ import ru.msu.cmc.webprak.models.UserStatus;
 
 import java.util.List;
 
-public interface SiteUserDAO extends CommonDAO<SiteUser, Long>{
+public interface SiteUserDAO extends CommonDAO<SiteUser, Long> {
     SiteUser findByLogin(String login);
     List<SiteUser> findByCriteria(Role role, UserStatus status, EducationalInstitution education);
     SiteUser getUserByLogin(String login);
+    List<SiteUser> getAllCompanies();
+    List<SiteUser> getAllUsers();
 }
