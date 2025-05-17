@@ -89,5 +89,41 @@ public class SiteUserDAOImpl extends CommonDAOImpl<SiteUser, Long> implements Si
             return null;
         }
     }
+
+    @Override
+    public List<SiteUser> getAllCompanies() {
+        try (Session session = sessionFactory.openSession()) {
+            // Создаем роль COMPANY для фильтрации
+            Role companyRole = new Role();
+            companyRole.setId(2L); // ID для COMPANY
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<SiteUser> query = builder.createQuery(SiteUser.class);
+            Root<SiteUser> root = query.from(SiteUser.class);
+
+            // Фильтруем только компании (роль COMPANY)
+            query.select(root).where(builder.equal(root.get("role"), companyRole));
+
+            return session.createQuery(query).getResultList();
+        }
+    }
+
+    @Override
+    public List<SiteUser> getAllUsers() {
+        try (Session session = sessionFactory.openSession()) {
+            // Создаем роль USER для фильтрации
+            Role userRole = new Role();
+            userRole.setId(1L); // ID для USER
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<SiteUser> query = builder.createQuery(SiteUser.class);
+            Root<SiteUser> root = query.from(SiteUser.class);
+
+            // Фильтруем только обычных пользователей (роль USER)
+            query.select(root).where(builder.equal(root.get("role"), userRole));
+
+            return session.createQuery(query).getResultList();
+        }
+    }
 }
 
