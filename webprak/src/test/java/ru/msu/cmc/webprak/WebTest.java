@@ -7,6 +7,10 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.msu.cmc.webprak.DAO.SiteUserDAO;
+import ru.msu.cmc.webprak.models.SiteUser;
+
 import java.time.Duration;
 import java.util.List;
 
@@ -15,6 +19,68 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WebTest {
     private ChromeDriver driver;
     private WebDriverWait wait;
+    private String lastRegisteredUsername;
+
+    @Autowired
+    private SiteUserDAO siteUserDAO;
+
+    private void registerTestUser(String username) {
+        try {
+            // 1. Регистрация
+            driver.get("http://localhost:8080/auth#register");
+
+            WebElement registerForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("register-form")));
+
+            // Прокрутка и заполнение формы
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", registerForm);
+            Thread.sleep(500);
+
+            registerForm.findElement(By.id("reg-login")).sendKeys(username);
+            registerForm.findElement(By.id("reg-password")).sendKeys("Testpass123");
+            registerForm.findElement(By.id("confirmPassword")).sendKeys("Testpass123");
+            registerForm.findElement(By.id("fullNameCompany")).sendKeys("Тестовый Пользователь");
+            registerForm.findElement(By.id("email")).sendKeys(username + "@test.com");
+            registerForm.findElement(By.id("homeAddress")).sendKeys("Тестовый адрес");
+
+            new Select(registerForm.findElement(By.id("userType"))).selectByValue("1");
+
+            WebElement registerButton = registerForm.findElement(
+                    By.xpath(".//button[contains(text(),'Зарегистрироваться')]"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", registerButton);
+
+            // 2. Проверка успешной регистрации (ждем сообщение или переход)
+            try {
+                // Вариант 1: Ждем сообщение об успехе
+                WebElement successAlert = wait.until(ExpectedConditions.presenceOfElementLocated(
+                        By.cssSelector(".alert-success")));
+                assertTrue(successAlert.getText().contains("успешн"));
+            } catch (TimeoutException e) {
+                // Вариант 2: Если нет сообщения, просто продолжаем
+                System.out.println("Не найдено сообщение об успешной регистрации, продолжаем...");
+            }
+
+            // 3. Авторизация после регистрации
+            WebElement loginForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("login-form")));
+
+            loginForm.findElement(By.id("username")).sendKeys(username);
+            loginForm.findElement(By.id("password")).sendKeys("Testpass123");
+            loginForm.findElement(By.xpath(".//button[contains(text(),'Войти')]")).click();
+
+            // 4. Проверяем переход в профиль
+            wait.until(ExpectedConditions.urlContains("/profile"));
+            this.lastRegisteredUsername = username;
+
+        } catch (Exception e) {
+            fail("Ошибка при регистрации/авторизации пользователя '" + username + "': " + e.getMessage());
+        }
+    }
+
+    // Геттер для получения последнего зарегистрированного имени пользователя
+    public String getLastRegisteredUsername() {
+        return this.lastRegisteredUsername;
+    }
 
     @BeforeEach
     void setUp() {
@@ -57,6 +123,36 @@ public class WebTest {
 
             WebElement passwordField = driver.findElement(By.id("password"));
             passwordField.sendKeys("pass5");
+            sleep(300);
+
+            WebElement loginButton = driver.findElement(By.xpath("//button[contains(text(),'Войти')]"));
+            loginButton.click();
+            sleep(1000);
+
+            wait.until(ExpectedConditions.urlContains("/profile"));
+        } catch (Exception e) {
+            fail("Ошибка при авторизации: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testCompanyLogin() {
+        try {
+            driver.get("http://localhost:8080/");
+            sleep(500);
+
+            WebElement profileLink = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//a[contains(text(),'Личный кабинет')]")
+            ));
+            profileLink.click();
+            sleep(500);
+
+            WebElement usernameField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("username")));
+            usernameField.sendKeys("techprogress");
+            sleep(300);
+
+            WebElement passwordField = driver.findElement(By.id("password"));
+            passwordField.sendKeys("pass1");
             sleep(300);
 
             WebElement loginButton = driver.findElement(By.xpath("//button[contains(text(),'Войти')]"));
@@ -420,6 +516,296 @@ public class WebTest {
 
         } catch (Exception e) {
             fail("Ошибка при тестировании поиска вакансий: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testUserRegistration() {
+        try {
+            // Переходим на страницу регистрации
+            driver.get("http://localhost:8080/auth#register");
+
+            // Ждем загрузки формы регистрации
+            WebElement registerForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("register-form")));
+
+            // Заполняем поля формы
+            String testUsername = "testuser_" + System.currentTimeMillis();
+            registerForm.findElement(By.id("reg-login")).sendKeys(testUsername);
+            registerForm.findElement(By.id("reg-password")).sendKeys("Testpass123");
+            registerForm.findElement(By.id("confirmPassword")).sendKeys("Testpass123");
+            registerForm.findElement(By.id("fullNameCompany")).sendKeys("Тестовый Пользователь");
+            registerForm.findElement(By.id("email")).sendKeys(testUsername + "@test.com");
+            registerForm.findElement(By.id("homeAddress")).sendKeys("Тестовый адрес");
+
+            // Выбираем тип пользователя (1 - соискатель, 2 - работодатель)
+            Select userType = new Select(registerForm.findElement(By.id("userType")));
+            userType.selectByValue("1");
+
+            // Находим кнопку регистрации
+            WebElement registerButton = registerForm.findElement(
+                    By.xpath(".//button[contains(text(),'Зарегистрироваться')]"));
+
+            // Прокручиваем до кнопки и кликаем с помощью JavaScript
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", registerButton);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", registerButton);
+
+            // Проверяем успешную регистрацию (ожидаем перенаправление на страницу входа)
+            wait.until(ExpectedConditions.urlContains("/auth"));
+
+            // Сохраняем имя пользователя для последующих тестов
+            this.lastRegisteredUsername = testUsername;
+        } catch (Exception e) {
+            fail("Ошибка при регистрации пользователя: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testCompanyRegistration() {
+        try {
+            // Переходим на страницу регистрации
+            driver.get("http://localhost:8080/auth#register");
+
+            // Ждем загрузки формы регистрации
+            WebElement registerForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("register-form")));
+
+            // Заполняем поля формы
+            String testUsername = "testuser_" + System.currentTimeMillis();
+            registerForm.findElement(By.id("reg-login")).sendKeys(testUsername);
+            registerForm.findElement(By.id("reg-password")).sendKeys("Testpass123");
+            registerForm.findElement(By.id("confirmPassword")).sendKeys("Testpass123");
+            registerForm.findElement(By.id("fullNameCompany")).sendKeys("Тестовая Компания");
+            registerForm.findElement(By.id("email")).sendKeys(testUsername + "@test.com");
+            registerForm.findElement(By.id("homeAddress")).sendKeys("Тестовый адрес");
+
+            // Выбираем тип пользователя (1 - соискатель, 2 - работодатель)
+            Select userType = new Select(registerForm.findElement(By.id("userType")));
+            userType.selectByValue("2");
+
+            // Находим кнопку регистрации
+            WebElement registerButton = registerForm.findElement(
+                    By.xpath(".//button[contains(text(),'Зарегистрироваться')]"));
+
+            // Прокручиваем до кнопки и кликаем с помощью JavaScript
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", registerButton);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", registerButton);
+
+            // Проверяем успешную регистрацию (ожидаем перенаправление на страницу входа)
+            wait.until(ExpectedConditions.urlContains("/auth"));
+
+            // Сохраняем имя пользователя для последующих тестов
+            this.lastRegisteredUsername = testUsername;
+        } catch (Exception e) {
+            fail("Ошибка при регистрации пользователя: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testAdminConsole() {
+        try {
+            // 1. Логинимся как администратор
+            driver.get("http://localhost:8080/auth/login");
+
+            WebElement loginForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("login-form")));
+
+            loginForm.findElement(By.id("username")).sendKeys("admin");
+            loginForm.findElement(By.id("password")).sendKeys("adminpass");
+            loginForm.findElement(By.xpath(".//button[contains(text(),'Войти')]")).click();
+
+            // 2. Переходим в админ-панель
+            wait.until(ExpectedConditions.urlContains("/admin/panel"));
+
+            // 3. Вводим тестовый SQL запрос
+            WebElement console = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.cssSelector("textarea[name='sqlCommand']")));
+
+            console.clear();
+            String testQuery = "SELECT 1+1 AS result";
+            console.sendKeys(testQuery);
+
+            // 4. Нажимаем кнопку выполнения
+            WebElement executeBtn = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[contains(text(),'Выполнить')]")));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", executeBtn);
+
+            // 5. Проверяем результат выполнения запроса
+            // Увеличиваем время ожидания для таблицы результатов
+            WebDriverWait longWait = new WebDriverWait(driver, Duration.ofSeconds(20));
+
+            // Проверяем наличие таблицы с результатами
+            WebElement resultTable = longWait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.cssSelector(".result-table")));
+
+            // Проверяем заголовок таблицы
+            WebElement header = resultTable.findElement(By.cssSelector("thead th"));
+            assertEquals("result", header.getText().trim(), "Неверный заголовок результата");
+
+            // Проверяем значение в таблице
+            WebElement resultValue = resultTable.findElement(By.cssSelector("tbody td"));
+            assertEquals("2", resultValue.getText().trim(), "Неверный результат вычисления");
+
+        } catch (Exception e) {
+            fail("Ошибка при тестировании админ-консоли: " + e.getMessage());
+        }
+    }
+
+    private void loginAsAdmin() throws Exception {
+        driver.get("http://localhost:8080/auth/login");
+
+        // Ждем загрузки формы входа
+        WebElement loginForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.id("login-form")));
+
+        // Заполняем данные администратора
+        loginForm.findElement(By.id("username")).sendKeys("admin");
+        loginForm.findElement(By.id("password")).sendKeys("adminpass");
+        loginForm.findElement(By.xpath(".//button[contains(text(),'Войти')]")).click();
+
+        // Ждем перехода на страницу профиля
+        wait.until(ExpectedConditions.urlContains("/profile"));
+    }
+
+    @Test
+    void testAdminUserDeletion() {
+        String testUsername = "testuser_" + System.currentTimeMillis();
+
+        try {
+            // 1. Регистрация тестового пользователя
+            driver.get("http://localhost:8080/auth#register");
+
+            WebElement registerForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("register-form")));
+
+            registerForm.findElement(By.id("reg-login")).sendKeys(testUsername);
+            registerForm.findElement(By.id("reg-password")).sendKeys("Testpass123");
+            registerForm.findElement(By.id("confirmPassword")).sendKeys("Testpass123");
+            registerForm.findElement(By.id("fullNameCompany")).sendKeys("Test User");
+            registerForm.findElement(By.id("email")).sendKeys(testUsername + "@test.com");
+            registerForm.findElement(By.id("homeAddress")).sendKeys("Test Address");
+
+            new Select(registerForm.findElement(By.id("userType"))).selectByValue("1");
+
+            WebElement registerButton = registerForm.findElement(
+                    By.xpath(".//button[contains(text(),'Зарегистрироваться')]"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", registerButton);
+
+            // Ждем завершения регистрации
+            try {
+                wait.until(ExpectedConditions.or(
+                        ExpectedConditions.presenceOfElementLocated(By.cssSelector(".alert-success")),
+                        ExpectedConditions.urlContains("/auth")
+                ));
+            } catch (TimeoutException e) {
+                System.out.println("No success message or redirect detected");
+            }
+
+            // 2. Логинимся как администратор
+            driver.get("http://localhost:8080/auth/login");
+
+            WebElement loginForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("login-form")));
+
+            loginForm.findElement(By.id("username")).sendKeys("admin");
+            loginForm.findElement(By.id("password")).sendKeys("adminpass");
+            loginForm.findElement(By.xpath(".//button[contains(text(),'Войти')]")).click();
+
+            // 3. Переходим в админ-панель
+            wait.until(ExpectedConditions.urlContains("/admin/panel"));
+
+            // 4. Вводим SQL запрос для удаления пользователя
+            WebElement console = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.cssSelector("textarea[name='sqlCommand']")));
+
+            console.clear();
+            String deleteQuery = "DELETE FROM site_user WHERE login = '" + testUsername + "'";
+            console.sendKeys(deleteQuery);
+
+            // 5. Нажимаем кнопку выполнения
+            WebElement executeBtn = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[contains(text(),'Выполнить')]")));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", executeBtn);
+
+            // 6. Проверяем точное сообщение об успешном выполнении
+            WebElement successMessage = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//*[contains(text(),'Успешно. Затронуто строк: 1')]")));
+
+            assertTrue(successMessage.isDisplayed(), "Сообщение об успешном удалении не отображается");
+
+        } catch (Exception e) {
+            fail("Ошибка при удалении пользователя '" + testUsername + "': " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testAdminUserDeletion2() {
+        String testUsername = "testuser_" + System.currentTimeMillis();
+
+        try {
+            // 1. Регистрация тестового пользователя
+            driver.get("http://localhost:8080/auth#register");
+
+            WebElement registerForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("register-form")));
+
+            registerForm.findElement(By.id("reg-login")).sendKeys(testUsername);
+            registerForm.findElement(By.id("reg-password")).sendKeys("Testpass123");
+            registerForm.findElement(By.id("confirmPassword")).sendKeys("Testpass123");
+            registerForm.findElement(By.id("fullNameCompany")).sendKeys("Test User");
+            registerForm.findElement(By.id("email")).sendKeys(testUsername + "@test.com");
+            registerForm.findElement(By.id("homeAddress")).sendKeys("Test Address");
+
+            new Select(registerForm.findElement(By.id("userType"))).selectByValue("2");
+
+            WebElement registerButton = registerForm.findElement(
+                    By.xpath(".//button[contains(text(),'Зарегистрироваться')]"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", registerButton);
+
+            // Ждем завершения регистрации
+            try {
+                wait.until(ExpectedConditions.or(
+                        ExpectedConditions.presenceOfElementLocated(By.cssSelector(".alert-success")),
+                        ExpectedConditions.urlContains("/auth")
+                ));
+            } catch (TimeoutException e) {
+                System.out.println("No success message or redirect detected");
+            }
+
+            // 2. Логинимся как администратор
+            driver.get("http://localhost:8080/auth/login");
+
+            WebElement loginForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("login-form")));
+
+            loginForm.findElement(By.id("username")).sendKeys("admin");
+            loginForm.findElement(By.id("password")).sendKeys("adminpass");
+            loginForm.findElement(By.xpath(".//button[contains(text(),'Войти')]")).click();
+
+            // 3. Переходим в админ-панель
+            wait.until(ExpectedConditions.urlContains("/admin/panel"));
+
+            // 4. Вводим SQL запрос для удаления пользователя
+            WebElement console = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.cssSelector("textarea[name='sqlCommand']")));
+
+            console.clear();
+            String deleteQuery = "DELETE FROM site_user WHERE login = '" + testUsername + "'";
+            console.sendKeys(deleteQuery);
+
+            // 5. Нажимаем кнопку выполнения
+            WebElement executeBtn = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[contains(text(),'Выполнить')]")));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", executeBtn);
+
+            // 6. Проверяем точное сообщение об успешном выполнении
+            WebElement successMessage = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//*[contains(text(),'Успешно. Затронуто строк: 1')]")));
+
+            assertTrue(successMessage.isDisplayed(), "Сообщение об успешном удалении не отображается");
+
+        } catch (Exception e) {
+            fail("Ошибка при удалении пользователя '" + testUsername + "': " + e.getMessage());
         }
     }
 }

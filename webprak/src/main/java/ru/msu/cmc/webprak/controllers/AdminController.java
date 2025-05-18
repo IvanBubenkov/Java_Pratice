@@ -2,6 +2,7 @@ package ru.msu.cmc.webprak.controllers;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,63 +26,69 @@ public class AdminController {
 
     @GetMapping("/panel")
     public String adminPanel(Model model, Authentication authentication) {
-        // Проверка прав администратора
         if (!isAdmin(authentication)) {
             return "redirect:/auth";
         }
-
-        // Возвращаем имя шаблона без поддиректории
         return "adminPanel";
     }
 
+    @Transactional
     @PostMapping("/execute")
     public String executeSql(@RequestParam String sqlCommand,
                              Model model,
                              Authentication authentication) {
-        // Проверка прав администратора
         if (!isAdmin(authentication)) {
             return "redirect:/auth";
         }
 
         try {
+            // Запрещаем DDL-операции и потенциально опасные команды
+            if (isDangerousQuery(sqlCommand)) {
+                model.addAttribute("error", "Выполнение этого типа запроса запрещено");
+                return "adminPanel";
+            }
+
             Query query = entityManager.createNativeQuery(sqlCommand);
 
-            // Обработка SELECT запросов
             if (isSelectQuery(sqlCommand)) {
                 List<Map<String, Object>> result = query.unwrap(org.hibernate.query.NativeQuery.class)
                         .setResultTransformer(org.hibernate.transform.Transformers.ALIAS_TO_ENTITY_MAP)
                         .getResultList();
                 model.addAttribute("result", result);
-            }
-            // Обработка других SQL команд
-            else {
+            } else {
                 int updateCount = query.executeUpdate();
                 model.addAttribute("message", "Успешно. Затронуто строк: " + updateCount);
+
+                // Явное сброс кэша для измененных сущностей
+                entityManager.flush();
+                entityManager.clear();
             }
         } catch (Exception e) {
             model.addAttribute("error", "SQL ошибка: " + e.getMessage());
+            // Откат транзакции произойдет автоматически благодаря @Transactional
         }
 
-        // Возвращаем имя шаблона без поддиректории
         return "adminPanel";
     }
 
-    /**
-     * Проверяет, является ли пользователь администратором
-     */
     private boolean isAdmin(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }
-
         SiteUser user = siteUserDAO.getUserByLogin(authentication.getName());
         return user != null && "ADMIN".equals(user.getRole().getRoleName());
     }
 
-    /**
-     * Проверяет, является ли запрос SELECT-запросом
-     */
     private boolean isSelectQuery(String sql) {
         return sql.trim().toLowerCase().startsWith("select");
+    }
+
+    private boolean isDangerousQuery(String sql) {
+        String lowerSql = sql.trim().toLowerCase();
+        return lowerSql.startsWith("drop") ||
+                lowerSql.startsWith("alter") ||
+                lowerSql.startsWith("truncate") ||
+                lowerSql.startsWith("create") ||
+                lowerSql.startsWith("grant");
     }
 }
