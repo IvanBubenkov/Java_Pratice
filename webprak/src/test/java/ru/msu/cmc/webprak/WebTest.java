@@ -250,4 +250,86 @@ public class WebTest {
             fail("Ошибка при тестировании поиска резюме: " + e.getMessage());
         }
     }
+    @Test
+    void testWorkHistoryView() {
+        try {
+            // Авторизация пользователя Васильев Иван Петрович (id=5)
+            driver.get("http://localhost:8080/");
+            sleep(500);
+
+            WebElement profileLink = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//a[contains(text(),'Личный кабинет')]")
+            ));
+            profileLink.click();
+            sleep(500);
+
+            WebElement usernameField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("username")));
+            usernameField.sendKeys("vasiliev");
+            sleep(300);
+
+            WebElement passwordField = driver.findElement(By.id("password"));
+            passwordField.sendKeys("pass5");
+            sleep(300);
+
+            WebElement loginButton = driver.findElement(By.xpath("//button[contains(text(),'Войти')]"));
+            loginButton.click();
+            sleep(1000);
+
+            wait.until(ExpectedConditions.urlContains("/profile"));
+
+            // Переход в историю работ
+            WebElement workHistoryLink = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//a[contains(text(),'История работ')]")
+            ));
+            workHistoryLink.click();
+            sleep(1000);
+
+            // Проверка заголовка страницы
+            wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//h1[contains(text(),'История работ')]")
+            ));
+            sleep(500);
+
+            // Проверка наличия записей
+            List<WebElement> records = driver.findElements(
+                    By.xpath("//div[contains(@class,'record-item')]")
+            );
+            assertFalse(records.isEmpty(), "Должны быть найдены записи о работе");
+
+            // Проверка первой записи (ожидаем запись с id=1 для пользователя vasiliev)
+            WebElement firstRecord = records.get(0);
+            String position = firstRecord.findElement(By.tagName("h4")).getText();
+            String company = firstRecord.findElement(By.xpath(".//p[contains(.,'Компания:')]/span")).getText();
+            String salary = firstRecord.findElement(By.xpath(".//span[contains(@class,'salary-badge')]")).getText();
+            String period = firstRecord.findElement(By.xpath(".//p[contains(@class,'text-muted')]")).getText();
+
+            assertTrue(position.contains("Программист"), "Должность не соответствует ожидаемой");
+            assertTrue(company.contains("ТехПрогресс"), "Компания не соответствует ожидаемой");
+            assertTrue(salary.contains("110000"), "Зарплата не соответствует ожидаемой");
+            assertTrue(period.contains("10.01.2022"), "Дата начала не соответствует ожидаемой");
+            assertTrue(period.contains("10.01.2023"), "Дата окончания не соответствует ожидаемой");
+
+            // Проверка фильтров
+            WebElement companyFilter = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("companyName")
+            ));
+            companyFilter.sendKeys("ТехПрогресс");
+            sleep(300);
+
+            WebElement applyButton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[contains(.,'Применить')]")
+            ));
+            applyButton.click();
+            sleep(1000);
+
+            // Проверка отфильтрованных результатов
+            List<WebElement> filteredRecords = driver.findElements(
+                    By.xpath("//div[contains(@class,'record-item')]")
+            );
+            assertEquals(1, filteredRecords.size(), "Должна быть найдена 1 запись после фильтрации");
+
+        } catch (Exception e) {
+            fail("Ошибка при тестировании истории работ: " + e.getMessage());
+        }
+    }
 }
