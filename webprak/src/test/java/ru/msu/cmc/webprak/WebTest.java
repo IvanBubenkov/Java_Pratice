@@ -332,4 +332,94 @@ public class WebTest {
             fail("Ошибка при тестировании истории работ: " + e.getMessage());
         }
     }
+
+    @Test
+    void testVacancySearch() {
+        try {
+            // 1. Авторизация пользователя
+            driver.get("http://localhost:8080/");
+            sleep(500);
+
+            WebElement profileLink = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//a[contains(text(),'Личный кабинет')]")
+            ));
+            profileLink.click();
+            sleep(500);
+
+            WebElement usernameField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("username")));
+            usernameField.sendKeys("vasiliev");
+            sleep(300);
+
+            WebElement passwordField = driver.findElement(By.id("password"));
+            passwordField.sendKeys("pass5");
+            sleep(300);
+
+            WebElement loginButton = driver.findElement(By.xpath("//button[contains(text(),'Войти')]"));
+            loginButton.click();
+            sleep(1000);
+
+            wait.until(ExpectedConditions.urlContains("/profile"));
+
+            // 2. Переход на страницу поиска вакансий
+            WebElement vacanciesLink = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//a[contains(text(),'Поиск вакансий')]")
+            ));
+            vacanciesLink.click();
+            sleep(1000);
+
+            // 3. Установка фильтров
+            WebElement positionInput = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("vacancyName")
+            ));
+            positionInput.sendKeys("Программист");
+            sleep(300);
+
+            WebElement minSalaryInput = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("minSalary")
+            ));
+            minSalaryInput.clear();
+            minSalaryInput.sendKeys("100000");
+            sleep(300);
+
+            // 4. Применение фильтров
+            WebElement applyButton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[contains(.,'Применить фильтры')]")
+            ));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", applyButton);
+            sleep(500);
+            applyButton.click();
+            sleep(1000);
+
+            // 5. Проверка результатов
+            WebElement foundCount = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//div[@class='text-muted' and contains(text(),'Найдено:')]")
+            ));
+            String countText = foundCount.getText();
+            assertTrue(countText.contains("1"), "Должна быть найдена 1 вакансия");
+
+            // 6. Проверка данных вакансии
+            WebElement vacancySection = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//div[contains(@class,'vacancy-section')]")
+            ));
+
+            // Название вакансии
+            WebElement vacancyTitle = vacancySection.findElement(By.tagName("h3"));
+            assertEquals("Программист", vacancyTitle.getText(), "Название вакансии не совпадает");
+
+            // Название компании
+            WebElement companyBadge = vacancySection.findElement(By.xpath(".//span[contains(@class,'company-badge')]"));
+            assertTrue(companyBadge.getText().contains("ТехПрогресс"), "Название компании не совпадает");
+
+            // Зарплата
+            WebElement salaryBadge = vacancySection.findElement(By.xpath(".//span[contains(@class,'salary-badge')]"));
+            assertTrue(salaryBadge.getText().contains("120,000.00"), "Зарплата не соответствует ожидаемой");
+
+            // Описание вакансии
+            WebElement description = vacancySection.findElement(By.xpath(".//div[contains(@class,'vacancy-item')]/p"));
+            assertFalse(description.getText().isEmpty(), "Описание вакансии должно быть заполнено");
+
+        } catch (Exception e) {
+            fail("Ошибка при тестировании поиска вакансий: " + e.getMessage());
+        }
+    }
 }
