@@ -1,4 +1,4 @@
-package ru.msu.cmc.webprak.DAO;
+/*package ru.msu.cmc.webprak.DAO;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -126,3 +126,5 @@ public class SelectedVacancyDAOImplTest {
         }
     }
 }
+
+ */

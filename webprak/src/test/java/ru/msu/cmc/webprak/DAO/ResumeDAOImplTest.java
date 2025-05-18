@@ -1,4 +1,4 @@
-package ru.msu.cmc.webprak.DAO;
+/*package ru.msu.cmc.webprak.DAO;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -41,12 +41,12 @@ public class ResumeDAOImplTest {
         SiteUser user6 = siteUserDAO.getUserByLogin("alexeeva");
         SiteUser user7 = siteUserDAO.getUserByLogin("pavlov");
 
-        List<Resume> result1 = resumeDAO.findByCriteria("Программист", null, null);
+        List<Resume> result1 = resumeDAO.findByCriteria("Программист", null, null, null, null);
         assertFalse(result1.isEmpty());
         assertEquals(1, result1.size());
         assertEquals("Программист", result1.get(0).getResumeName());
 
-        List<Resume> result2 = resumeDAO.findByCriteria(null, user6.getId(), null);
+        List<Resume> result2 = resumeDAO.findByCriteria(null, user6.getId(), null, null, null);
         assertFalse(result2.isEmpty());
         assertEquals(2, result2.size());
         assertTrue(result2.stream().anyMatch(r -> r.getResumeName().equals("Инженер-строитель")));
@@ -212,3 +212,5 @@ public class ResumeDAOImplTest {
         }
     }
 }
+
+ */

@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.4.3'
+	id 'org.springframework.boot' version '3.2.5'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -16,6 +16,18 @@ java {
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
+	}
+
+	// Добавляем конфигурацию для исключения конфликтующих зависимостей
+	all {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+		resolutionStrategy {
+			force 'org.junit.platform:junit-platform-commons:1.10.2'
+			force 'org.junit.platform:junit-platform-engine:1.10.2'
+			force 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+			force 'org.junit.jupiter:junit-jupiter-params:5.10.2'
+			force 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+		}
 	}
 }
 
@@ -43,8 +55,25 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
 	// Testing
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage'
+		exclude group: 'org.mockito', module: 'mockito-core'
+	}
 	testImplementation 'org.springframework.security:spring-security-test'
+
+	// Selenium
+	testImplementation 'org.seleniumhq.selenium:selenium-java:4.18.1'
+	testImplementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.18.1'
+	testImplementation 'io.github.bonigarcia:webdrivermanager:5.7.0'
+
+	// JUnit 5
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+	testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+
+	// Mockito
+	testImplementation 'org.mockito:mockito-core:5.11.0'
+	testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
 }
 
 tasks.named('test') {
