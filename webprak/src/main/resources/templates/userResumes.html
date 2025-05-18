@@ -1,259 +1,259 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Мои резюме | QuestBoard</title>
-    <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            padding-top: 5rem;
-        }
-        .search-container {
-            background-color: white;
-            border-radius: 10px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
-        .resume-section {
-            background-color: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .section-title {
-            color: #0d6efd;
-            border-bottom: 2px solid #0d6efd;
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .resume-item {
-            padding: 1rem 0;
-            border-bottom: 1px solid #eee;
-        }
-        .resume-item:last-child {
-            border-bottom: none;
-        }
-        .salary-badge {
-            background-color: #28a745;
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            display: inline-block;
-            margin-bottom: 1rem;
-        }
-        .views-badge {
-            background-color: #6c757d;
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            display: inline-block;
-        }
-        .navbar {
-            background-color: #212529;
-        }
-        .filters-row {
-            margin-bottom: 1.5rem;
-        }
-        .no-results {
-            text-align: center;
-            padding: 3rem 0;
-            color: #6c757d;
-        }
-        .salary-range {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .work-history-item {
-            margin-bottom: 0.5rem;
-        }
-        .create-btn {
-            margin-bottom: 1.5rem;
-        }
-    </style>
-</head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Мои резюме | QuestBoard</title>
+        <meta charset="UTF-8">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
+            body {
+                background-color: #f8f9fa;
+                padding-top: 5rem;
+            }
+            .search-container {
+                background-color: white;
+                border-radius: 10px;
+                padding: 2rem;
+                margin-bottom: 2rem;
+                box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            }
+            .resume-section {
+                background-color: white;
+                border-radius: 10px;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            .section-title {
+                color: #0d6efd;
+                border-bottom: 2px solid #0d6efd;
+                padding-bottom: 0.5rem;
+                margin-bottom: 1.5rem;
+            }
+            .resume-item {
+                padding: 1rem 0;
+                border-bottom: 1px solid #eee;
+            }
+            .resume-item:last-child {
+                border-bottom: none;
+            }
+            .salary-badge {
+                background-color: #28a745;
+                color: white;
+                padding: 0.3rem 0.8rem;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                display: inline-block;
+                margin-bottom: 1rem;
+            }
+            .views-badge {
+                background-color: #6c757d;
+                color: white;
+                padding: 0.3rem 0.8rem;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                display: inline-block;
+            }
+            .navbar {
+                background-color: #212529;
+            }
+            .filters-row {
+                margin-bottom: 1.5rem;
+            }
+            .no-results {
+                text-align: center;
+                padding: 3rem 0;
+                color: #6c757d;
+            }
+            .salary-range {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .work-history-item {
+                margin-bottom: 0.5rem;
+            }
+            .create-btn {
+                margin-bottom: 1.5rem;
+            }
+        </style>
+    </head>
+    <body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">QuestBoard</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/vacancies/search">Поиск вакансий</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/resumes/search">Поиск резюме</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile">Личный кабинет</a>
+                    </li>
+                    <li class="nav-item">
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="nav-link btn btn-link">Выйти</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
-        <a class="navbar-brand" href="/">QuestBoard</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/vacancies/search">Поиск вакансий</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/resumes/search">Поиск резюме</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="/profile">Личный кабинет</a>
-                </li>
-                <li class="nav-item">
-                    <form th:action="@{/logout}" method="post">
-                        <button type="submit" class="nav-link btn btn-link">Выйти</button>
-                    </form>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+        <div class="search-container">
+            <h1 class="mb-4"><i class="fas fa-user-tie me-2"></i>Мои резюме</h1>
 
-<div class="container">
-    <div class="search-container">
-        <h1 class="mb-4"><i class="fas fa-user-tie me-2"></i>Мои резюме</h1>
-
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="/resumes/new" class="btn btn-success create-btn">
-                <i class="fas fa-plus me-1"></i> Создать новое резюме
-            </a>
-            <div class="text-muted">
-                Найдено резюме: <span th:text="${resumes.size()}"></span>
-            </div>
-        </div>
-
-        <form th:action="@{/my-resumes}" method="get">
-            <div class="row g-3 filters-row">
-                <div class="col-md-4">
-                    <label for="position" class="form-label">Должность</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
-                        <select class="form-select" id="position" name="position">
-                            <option value="">Любая должность</option>
-                            <option th:each="pos : ${availablePositions}"
-                                    th:value="${pos}"
-                                    th:text="${pos}"
-                                    th:selected="${filterPosition != null and filterPosition == pos}">
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <label for="educationId" class="form-label">Образование</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
-                        <select class="form-select" id="educationId" name="educationId">
-                            <option value="">Любое образование</option>
-                            <option th:each="edu : ${allEducationLevels}"
-                                    th:value="${edu.id}"
-                                    th:text="${edu.educationLevel}"
-                                    th:selected="${filterEducationId != null and filterEducationId == edu.id}">
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Зарплата</label>
-                    <div class="salary-range">
-                        <div class="input-group">
-                            <span class="input-group-text">от</span>
-                            <input type="number" class="form-control" id="minSalary" name="minSalary"
-                                   th:value="${filterMinSalary}" placeholder="Руб." min="0" step="0.01">
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-text">до</span>
-                            <input type="number" class="form-control" id="maxSalary" name="maxSalary"
-                                   th:value="${filterMaxSalary}" placeholder="Руб." min="0" step="0.01">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <label for="companyExperience" class="form-label">Опыт в компаниях</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-building"></i></span>
-                        <select class="form-select" id="companyExperience" name="companyExperience">
-                            <option value="">Любая компания</option>
-                            <option th:each="company : ${availableCompanies}"
-                                    th:value="${company}"
-                                    th:text="${company}"
-                                    th:selected="${filterCompanyExperience != null and filterCompanyExperience == company}">
-                            </option>
-                        </select>
-                    </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a href="/resumes/new" class="btn btn-success create-btn">
+                    <i class="fas fa-plus me-1"></i> Создать новое резюме
+                </a>
+                <div class="text-muted">
+                    Найдено резюме: <span th:text="${resumes.size()}"></span>
                 </div>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mt-3">
+            <form th:action="@{/my-resumes}" method="get">
+                <div class="row g-3 filters-row">
+                    <div class="col-md-4">
+                        <label for="position" class="form-label">Должность</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
+                            <select class="form-select" id="position" name="position">
+                                <option value="">Любая должность</option>
+                                <option th:each="pos : ${availablePositions}"
+                                        th:value="${pos}"
+                                        th:text="${pos}"
+                                        th:selected="${filterPosition != null and filterPosition == pos}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="educationId" class="form-label">Образование</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                            <select class="form-select" id="educationId" name="educationId">
+                                <option value="">Любое образование</option>
+                                <option th:each="edu : ${allEducationLevels}"
+                                        th:value="${edu.id}"
+                                        th:text="${edu.educationLevel}"
+                                        th:selected="${filterEducationId != null and filterEducationId == edu.id}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Зарплата</label>
+                        <div class="salary-range">
+                            <div class="input-group">
+                                <span class="input-group-text">от</span>
+                                <input type="number" class="form-control" id="minSalary" name="minSalary"
+                                       th:value="${filterMinSalary}" placeholder="Руб." min="0" step="0.01">
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text">до</span>
+                                <input type="number" class="form-control" id="maxSalary" name="maxSalary"
+                                       th:value="${filterMaxSalary}" placeholder="Руб." min="0" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="companyExperience" class="form-label">Опыт в компаниях</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-building"></i></span>
+                            <select class="form-select" id="companyExperience" name="companyExperience">
+                                <option value="">Любая компания</option>
+                                <option th:each="company : ${availableCompanies}"
+                                        th:value="${company}"
+                                        th:text="${company}"
+                                        th:selected="${filterCompanyExperience != null and filterCompanyExperience == company}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fas fa-filter me-1"></i> Применить фильтры
+                        </button>
+                        <a th:href="@{/my-resumes}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i> Сбросить
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div th:if="${resumes.isEmpty()}" class="resume-section no-results">
+            <i class="fas fa-search fa-3x mb-3"></i>
+            <h3>Резюме не найдены</h3>
+            <p class="text-muted">Попробуйте изменить параметры поиска или создать новое резюме</p>
+        </div>
+
+        <div th:each="resume : ${resumes}" class="resume-section">
+            <div class="d-flex justify-content-between align-items-start mb-3">
                 <div>
-                    <button type="submit" class="btn btn-primary me-2">
-                        <i class="fas fa-filter me-1"></i> Применить фильтры
-                    </button>
-                    <a th:href="@{/my-resumes}" class="btn btn-outline-secondary">
-                        <i class="fas fa-times me-1"></i> Сбросить
+                    <h3 th:text="${resume.resumeName} ?: 'Резюме без названия'"></h3>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span th:if="${resume.minSalaryRequirement != null}" class="salary-badge">
+                            <i class="fas fa-money-bill-wave me-1"></i>
+                            <span th:text="'от ' + ${#numbers.formatDecimal(resume.minSalaryRequirement, 1, 'COMMA', 2, 'POINT')} + ' ₽'"></span>
+                        </span>
+                        <span class="views-badge">
+                            <i class="fas fa-eye me-1"></i>
+                            <span th:text="${resume.numberOfViews} + ' просмотров'"></span>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <a th:href="@{'/resumes/' + ${resume.id}}" class="btn btn-primary me-2">
+                        <i class="fas fa-eye me-1"></i> Подробнее
+                    </a>
+                    <a th:href="@{'/resumes/edit/' + ${resume.id}}" class="btn btn-outline-secondary">
+                        <i class="fas fa-edit me-1"></i> Редактировать
                     </a>
                 </div>
             </div>
-        </form>
-    </div>
 
-    <div th:if="${resumes.isEmpty()}" class="resume-section no-results">
-        <i class="fas fa-search fa-3x mb-3"></i>
-        <h3>Резюме не найдены</h3>
-        <p class="text-muted">Попробуйте изменить параметры поиска или создать новое резюме</p>
-    </div>
+            <div class="resume-item">
+                <h5 class="section-title">Основная информация</h5>
+                <p th:if="${resume.user.education != null}">
+                    <strong>Образование:</strong>
+                    <span th:text="${resume.user.education.educationLevel}"></span>
+                </p>
+            </div>
 
-    <div th:each="resume : ${resumes}" class="resume-section">
-        <div class="d-flex justify-content-between align-items-start mb-3">
-            <div>
-                <h3 th:text="${resume.resumeName} ?: 'Резюме без названия'"></h3>
-                <div class="d-flex flex-wrap gap-2 mb-3">
-                    <span th:if="${resume.minSalaryRequirement != null}" class="salary-badge">
-                        <i class="fas fa-money-bill-wave me-1"></i>
-                        <span th:text="'от ' + ${#numbers.formatDecimal(resume.minSalaryRequirement, 1, 'COMMA', 2, 'POINT')} + ' ₽'"></span>
-                    </span>
-                    <span class="views-badge">
-                        <i class="fas fa-eye me-1"></i>
-                        <span th:text="${resume.numberOfViews} + ' просмотров'"></span>
-                    </span>
+            <div class="resume-item">
+                <h5 class="section-title">Опыт работы</h5>
+                <div th:if="${not workHistoryMap.get(resume.id).isEmpty()}">
+                    <div th:each="work : ${workHistoryMap.get(resume.id)}" class="work-history-item">
+                        <p>
+                            <strong th:text="${work.vacancyName}"></strong>
+                            <span th:if="${work.company != null}"
+                                  th:text="' в ' + ${work.company.fullNameCompany}"></span>
+                            <span th:if="${work.dateStart != null}"
+                                  th:text="' (' + ${#temporals.format(work.dateStart, 'MM/yyyy')} +
+                                          ' - ' + ${work.dateEnd != null ? #temporals.format(work.dateEnd, 'MM/yyyy') : 'н.в.'} + ')'"></span>
+                            <span th:if="${work.salary != null}"
+                                  th:text="', ' + ${#numbers.formatDecimal(work.salary, 1, 'COMMA', 2, 'POINT')} + ' руб.'"></span>
+                        </p>
+                    </div>
                 </div>
+                <p th:if="${workHistoryMap.get(resume.id).isEmpty()}" class="text-muted">
+                    Нет информации об опыте работы
+                </p>
             </div>
-            <div>
-                <a th:href="@{'/resumes/' + ${resume.id}}" class="btn btn-primary me-2">
-                    <i class="fas fa-eye me-1"></i> Подробнее
-                </a>
-                <a th:href="@{'/resumes/edit/' + ${resume.id}}" class="btn btn-outline-secondary">
-                    <i class="fas fa-edit me-1"></i> Редактировать
-                </a>
-            </div>
-        </div>
-
-        <div class="resume-item">
-            <h5 class="section-title">Основная информация</h5>
-            <p th:if="${resume.user.education != null}">
-                <strong>Образование:</strong>
-                <span th:text="${resume.user.education.educationLevel}"></span>
-            </p>
-        </div>
-
-        <div class="resume-item">
-            <h5 class="section-title">Опыт работы</h5>
-            <div th:if="${not workHistoryMap.get(resume.id).isEmpty()}">
-                <div th:each="work : ${workHistoryMap.get(resume.id)}" class="work-history-item">
-                    <p>
-                        <strong th:text="${work.vacancyName}"></strong>
-                        <span th:if="${work.company != null}"
-                              th:text="' в ' + ${work.company.fullNameCompany}"></span>
-                        <span th:if="${work.dateStart != null}"
-                              th:text="' (' + ${#temporals.format(work.dateStart, 'MM/yyyy')} +
-                                      ' - ' + ${work.dateEnd != null ? #temporals.format(work.dateEnd, 'MM/yyyy') : 'н.в.'} + ')'"></span>
-                        <span th:if="${work.salary != null}"
-                              th:text="', ' + ${#numbers.formatDecimal(work.salary, 1, 'COMMA', 2, 'POINT')} + ' руб.'"></span>
-                    </p>
-                </div>
-            </div>
-            <p th:if="${workHistoryMap.get(resume.id).isEmpty()}" class="text-muted">
-                Нет информации об опыте работы
-            </p>
         </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
