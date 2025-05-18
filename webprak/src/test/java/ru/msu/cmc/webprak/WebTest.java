@@ -808,4 +808,75 @@ public class WebTest {
             fail("Ошибка при удалении пользователя '" + testUsername + "': " + e.getMessage());
         }
     }
+
+    @Test
+    void testAddEmploymentHistory() {
+        try {
+            // 1. Логинимся как пользователь
+            driver.get("http://localhost:8080/auth/login");
+
+            WebElement loginForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("login-form")));
+
+            loginForm.findElement(By.id("username")).sendKeys("vasiliev");
+            loginForm.findElement(By.id("password")).sendKeys("pass5");
+            loginForm.findElement(By.xpath(".//button[contains(text(),'Войти')]")).click();
+
+            // 2. Переходим в личный кабинет
+            WebElement personalCabinetBtn = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//a[contains(text(),'Личный кабинет')]")));
+            personalCabinetBtn.click();
+
+            // 3. Переходим в раздел "История работ"
+            wait.until(ExpectedConditions.urlContains("/profile"));
+            driver.get("http://localhost:8080/work-history");
+            wait.until(ExpectedConditions.urlContains("/work-history"));
+
+            // 4. Нажимаем кнопку "Добавить запись"
+            WebElement addRecordBtn = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//a[contains(@class, 'btn-primary') and contains(., 'Добавить запись')]")));
+
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addRecordBtn);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", addRecordBtn);
+
+            // 5. Заполняем форму новой записи
+            wait.until(ExpectedConditions.urlContains("/work-history/new"));
+
+            // Генерируем уникальные данные для теста
+            String position = "Test Position " + System.currentTimeMillis();
+            String salary = "100000";
+            String startDate = "2020-01-01";
+            String endDate = "2022-12-31";
+
+            // Выбираем первую компанию из списка
+            WebElement companySelect = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("companyId")));
+            Select companyDropdown = new Select(companySelect);
+            companyDropdown.selectByIndex(1); // Первая реальная компания (индекс 1, так как 0 - это placeholder)
+
+            // Заполняем остальные поля
+            driver.findElement(By.id("vacancyName")).sendKeys(position);
+            driver.findElement(By.id("salary")).sendKeys(salary);
+            driver.findElement(By.id("dateStart")).clear();
+            driver.findElement(By.id("dateStart")).sendKeys(startDate);
+            driver.findElement(By.id("dateEnd")).sendKeys(endDate);
+
+            // 6. Отправляем форму (кнопка находится вне формы, поэтому ищем по всему документу)
+            WebElement submitBtn = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[contains(@class, 'btn-primary') and contains(., 'Сохранить запись')]")));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", submitBtn);
+
+            // 7. Проверяем успешное добавление
+            wait.until(ExpectedConditions.urlContains("/work-history"));
+
+            // Проверяем наличие новой записи по должности
+            WebElement newRecord = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//h4[contains(text(),'" + position + "')]")));
+
+            assertTrue(newRecord.isDisplayed(), "Новая запись о трудоустройстве не отображается");
+
+        } catch (Exception e) {
+            fail("Ошибка при добавлении записи о трудоустройстве: " + e.getMessage());
+        }
+    }
 }
