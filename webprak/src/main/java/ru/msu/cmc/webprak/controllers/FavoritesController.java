@@ -10,8 +10,7 @@ import ru.msu.cmc.webprak.DAO.*;
 import ru.msu.cmc.webprak.models.*;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -26,6 +25,12 @@ public class FavoritesController {
 
     @Autowired
     private SiteUserDAO siteUserDAO;
+
+    @Autowired
+    private VacancyDAO vacancyDAO;
+
+    @Autowired
+    private ResumeDAO resumeDAO;
 
     @GetMapping
     public String favoritesPage(
@@ -46,6 +51,32 @@ public class FavoritesController {
 
         boolean isEmployer = currentUser.getRole().getRoleName().equals("COMPANY");
         model.addAttribute("isEmployer", isEmployer);
+
+        // Получаем список всех возможных должностей и компаний для фильтров
+        if (isEmployer) {
+            List<String> positions = resumeDAO.getAll().stream()
+                    .map(Resume::getResumeName)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList());
+            model.addAttribute("positions", positions);
+        } else {
+            List<String> positions = vacancyDAO.getAll().stream()
+                    .map(Vacancy::getVacancyName)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList());
+            List<String> companies = vacancyDAO.getAll().stream()
+                    .map(v -> v.getCompany() != null ? v.getCompany().getFullNameCompany() : null)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList());
+            model.addAttribute("positions", positions);
+            model.addAttribute("companies", companies);
+        }
 
         if (isEmployer) {
             // Для работодателя - избранные резюме

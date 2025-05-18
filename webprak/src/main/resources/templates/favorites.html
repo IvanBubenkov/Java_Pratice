@@ -47,6 +47,14 @@
             font-size: 0.9rem;
             display: inline-block;
         }
+        .user-badge {
+            background-color: #17a2b8;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
         .navbar {
             background-color: #212529;
         }
@@ -112,8 +120,13 @@
                     </label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
-                        <input type="text" class="form-control" id="position" name="position"
-                               th:value="${filterPosition}" placeholder="Введите название">
+                        <select class="form-select" id="position" name="position">
+                            <option value="">Все</option>
+                            <option th:each="pos : ${positions}"
+                                    th:value="${pos}"
+                                    th:text="${pos}"
+                                    th:selected="${filterPosition == pos}"></option>
+                        </select>
                     </div>
                 </div>
 
@@ -121,8 +134,13 @@
                     <label for="company" class="form-label">Компания</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-building"></i></span>
-                        <input type="text" class="form-control" id="company" name="company"
-                               th:value="${filterCompany}" placeholder="Введите название компании">
+                        <select class="form-select" id="company" name="company">
+                            <option value="">Все</option>
+                            <option th:each="comp : ${companies}"
+                                    th:value="${comp}"
+                                    th:text="${comp}"
+                                    th:selected="${filterCompany == comp}"></option>
+                        </select>
                     </div>
                 </div>
 
@@ -165,6 +183,10 @@
                         <span th:if="${resume.minSalaryRequirement != null}" class="salary-badge">
                             <i class="fas fa-money-bill-wave me-1"></i>
                             <span th:text="'от ' + ${#numbers.formatDecimal(resume.minSalaryRequirement, 1, 'COMMA', 2, 'POINT')} + ' ₽'"></span>
+                        </span>
+                        <span class="user-badge" th:if="${resume.user != null}">
+                            <i class="fas fa-user me-1"></i>
+                            <span th:text="${resume.user.fullNameCompany}"></span>
                         </span>
                     </div>
                 </div>
