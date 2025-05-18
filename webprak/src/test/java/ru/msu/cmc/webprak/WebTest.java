@@ -879,4 +879,125 @@ public class WebTest {
             fail("Ошибка при добавлении записи о трудоустройстве: " + e.getMessage());
         }
     }
+
+    @Test
+    void testDeleteVacancy() {
+        try {
+            // 1. Логинимся как работодатель
+            driver.get("http://localhost:8080/auth/login");
+
+            WebElement loginForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("login-form")));
+
+            loginForm.findElement(By.id("username")).sendKeys("techprogress");
+            loginForm.findElement(By.id("password")).sendKeys("pass1");
+            loginForm.findElement(By.xpath(".//button[contains(text(),'Войти')]")).click();
+
+            // 2. Переходим в личный кабинет
+            WebElement personalCabinetBtn = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//a[contains(text(),'Личный кабинет')]")));
+            personalCabinetBtn.click();
+
+            // 3. Переходим в раздел "Мои вакансии"
+            wait.until(ExpectedConditions.urlContains("/profile"));
+            driver.get("http://localhost:8080/company-vacancies");
+            wait.until(ExpectedConditions.urlContains("/company-vacancies"));
+
+            // 4. Находим первую вакансию и запоминаем её название
+            WebElement firstVacancy = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.cssSelector(".vacancy-section")));
+            String vacancyName = firstVacancy.findElement(By.tagName("h3")).getText();
+
+            // 5. Нажимаем кнопку "Удалить"
+            WebElement deleteBtn = firstVacancy.findElement(
+                    By.xpath(".//button[contains(@class, 'btn-danger')]"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", deleteBtn);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", deleteBtn);
+
+            // 6. Подтверждаем удаление в диалоговом окне
+            Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+            alert.accept();
+
+            // 7. Проверяем, что вакансия исчезла из списка
+            wait.until(ExpectedConditions.invisibilityOfElementWithText(
+                    By.cssSelector(".vacancy-section h3"), vacancyName));
+
+            assertTrue(driver.findElements(By.xpath("//h3[contains(text(),'" + vacancyName + "')]")).isEmpty(),
+                    "Вакансия не была удалена");
+
+        } catch (Exception e) {
+            fail("Ошибка при удалении вакансии: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testEditVacancy() {
+        try {
+            // 1. Логинимся как работодатель
+            driver.get("http://localhost:8080/auth/login");
+
+            WebElement loginForm = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("login-form")));
+
+            loginForm.findElement(By.id("username")).sendKeys("techprogress");
+            loginForm.findElement(By.id("password")).sendKeys("pass1");
+            loginForm.findElement(By.xpath(".//button[contains(text(),'Войти')]")).click();
+
+            // 2. Переходим в личный кабинет
+            WebElement personalCabinetBtn = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//a[contains(text(),'Личный кабинет')]")));
+            personalCabinetBtn.click();
+
+            // 3. Переходим в раздел "Мои вакансии"
+            wait.until(ExpectedConditions.urlContains("/profile"));
+            driver.get("http://localhost:8080/company-vacancies");
+            wait.until(ExpectedConditions.urlContains("/company-vacancies"));
+
+            // 4. Находим первую вакансию и нажимаем "Редактировать"
+            WebElement firstVacancy = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.cssSelector(".vacancy-section")));
+            String originalName = firstVacancy.findElement(By.tagName("h3")).getText();
+
+            WebElement editBtn = firstVacancy.findElement(
+                    By.xpath(".//a[contains(@class, 'btn-outline-secondary')]"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", editBtn);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", editBtn);
+
+            // 5. Редактируем данные вакансии
+            wait.until(ExpectedConditions.urlContains("/vacancies/edit"));
+
+            String newName = "Updated Position " + System.currentTimeMillis();
+            String newSalary = "150000";
+            String newDescription = "Updated description for test vacancy";
+
+            WebElement nameField = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.id("vacancyName")));
+            nameField.clear();
+            nameField.sendKeys(newName);
+
+            driver.findElement(By.id("minSalary")).clear();
+            driver.findElement(By.id("minSalary")).sendKeys(newSalary);
+
+            WebElement descriptionField = driver.findElement(By.id("description"));
+            descriptionField.clear();
+            descriptionField.sendKeys(newDescription);
+
+            // 6. Сохраняем изменения
+            WebElement saveBtn = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[contains(@class, 'btn-primary')]")));
+            saveBtn.click();
+
+            // 7. Проверяем, что изменения сохранились
+            wait.until(ExpectedConditions.urlContains("/company-vacancies"));
+
+            WebElement updatedVacancy = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//h3[contains(text(),'" + newName + "')]")));
+
+            assertTrue(updatedVacancy.isDisplayed(), "Изменения не сохранились");
+            assertTrue(driver.getPageSource().contains("150,000.00"), "Зарплата не обновилась");
+
+        } catch (Exception e) {
+            fail("Ошибка при редактировании вакансии: " + e.getMessage());
+        }
+    }
 }
