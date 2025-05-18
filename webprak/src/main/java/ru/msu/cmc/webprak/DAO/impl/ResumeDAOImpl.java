@@ -26,7 +26,7 @@ public class ResumeDAOImpl extends CommonDAOImpl<Resume, Long> implements Resume
     public List<Resume> findByCriteria(String resumeName,
                                        Long userId,
                                        EducationalInstitution education,
-                                       String previousPosition,
+                                       String position,
                                        BigDecimal minSalary,
                                        BigDecimal maxSalary) {
         try (Session session = sessionFactory.openSession()) {
@@ -36,20 +36,17 @@ public class ResumeDAOImpl extends CommonDAOImpl<Resume, Long> implements Resume
 
             List<Predicate> predicates = new ArrayList<>();
 
-            // Фильтр по названию резюме
             if (resumeName != null && !resumeName.isEmpty()) {
                 predicates.add(builder.like(
                         builder.lower(root.get("resumeName")),
-                        likeExpr(resumeName.toLowerCase())
+                        "%" + resumeName.toLowerCase() + "%"
                 ));
             }
 
-            // Фильтр по пользователю
             if (userId != null) {
                 predicates.add(builder.equal(root.get("user").get("id"), userId));
             }
 
-            // Фильтр по образованию
             if (education != null) {
                 predicates.add(builder.equal(
                         root.get("user").get("education").get("id"),
@@ -57,31 +54,25 @@ public class ResumeDAOImpl extends CommonDAOImpl<Resume, Long> implements Resume
                 ));
             }
 
-            // Фильтр по предыдущей должности (через WorkHistory)
-            if (previousPosition != null && !previousPosition.isEmpty()) {
-                Join<Resume, SiteUser> userJoin = root.join("user");
-                Join<SiteUser, WorkHistory> workHistoryJoin = userJoin.join("workHistories");
-
+            if (position != null && !position.isEmpty()) {
                 predicates.add(builder.like(
-                        builder.lower(workHistoryJoin.get("vacancyName")),
-                        likeExpr(previousPosition.toLowerCase())
+                        builder.lower(root.get("resumeName")),
+                        "%" + position.toLowerCase() + "%"
                 ));
             }
 
-            // Фильтр по зарплате
             if (minSalary != null) {
                 predicates.add(builder.ge(root.get("minSalaryRequirement"), minSalary));
             }
+
             if (maxSalary != null) {
                 predicates.add(builder.le(root.get("minSalaryRequirement"), maxSalary));
             }
 
-            // Применяем все условия
             if (!predicates.isEmpty()) {
                 query.where(predicates.toArray(new Predicate[0]));
             }
 
-            // Сортировка по количеству просмотров
             query.orderBy(builder.desc(root.get("numberOfViews")));
 
             return session.createQuery(query).getResultList();
