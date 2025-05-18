@@ -141,6 +141,21 @@ public class UserResumesController {
         return "userResumes";
     }
 
+    @PostMapping("/delete/{id}")
+    public String deleteResume(@PathVariable Long id) {
+        SiteUser currentUser = getCurrentUser();
+        if (currentUser == null) {
+            return "redirect:/auth";
+        }
+
+        Resume resume = resumeDAO.getById(id);
+        if (resume != null && resume.getUser().getId().equals(currentUser.getId())) {
+            resumeDAO.delete(resume);
+        }
+
+        return "redirect:/my-resumes";
+    }
+
     private SiteUser getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
